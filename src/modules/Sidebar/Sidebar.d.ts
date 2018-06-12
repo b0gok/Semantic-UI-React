@@ -1,7 +1,8 @@
 import * as React from 'react';
+import { SemanticShorthandContent } from '../..';
 
-import { default as SidebarPushable } from './SidebarPushable';
-import { default as SidebarPusher } from './SidebarPusher';
+import SidebarPushable from './SidebarPushable';
+import SidebarPusher from './SidebarPusher';
 
 export interface SidebarProps {
   [key: string]: any;
@@ -17,6 +18,9 @@ export interface SidebarProps {
 
   /** Additional classes. */
   className?: string;
+
+  /** Shorthand for primary content. */
+  content?: SemanticShorthandContent;
 
   /** Initial value of visible. */
   defaultVisible?: boolean;

@@ -1,12 +1,8 @@
 import * as React from 'react';
 
-import {
-  SemanticCOLORS,
-  SemanticFLOATS,
-  SemanticTEXTALIGNMENTS
-} from '../..';
-import { default as HeaderContent } from './HeaderContent';
-import { default as HeaderSubHeader } from './HeaderSubheader';
+import { SemanticCOLORS, SemanticFLOATS, SemanticTEXTALIGNMENTS } from '../..';
+import HeaderContent from './HeaderContent';
+import HeaderSubHeader from './HeaderSubheader';
 
 export interface HeaderProps {
   [key: string]: any;
@@ -51,7 +47,7 @@ export interface HeaderProps {
   inverted?: boolean;
 
   /** Content headings are sized with em and are based on the font-size of their container. */
-  size?: 'mini' | 'tiny' | 'small' | 'medium' | 'large' | 'huge';
+  size?: 'tiny' | 'small' | 'medium' | 'large' | 'huge';
 
   /** Headers may be formatted to label smaller or de-emphasized content. */
   sub?: boolean;

@@ -4,11 +4,11 @@ import PropTypes from 'prop-types'
 import React from 'react'
 
 import {
+  childrenUtils,
   createShorthandFactory,
   customPropTypes,
   getElementType,
   getUnhandledProps,
-  META,
   SUI,
   useKeyOnly,
   useTextAlignProp,
@@ -58,8 +58,12 @@ function TableCell(props) {
   const rest = getUnhandledProps(TableCell, props)
   const ElementType = getElementType(TableCell, props)
 
-  if (!_.isNil(children)) {
-    return <ElementType {...rest} className={classes}>{children}</ElementType>
+  if (!childrenUtils.isNil(children)) {
+    return (
+      <ElementType {...rest} className={classes}>
+        {children}
+      </ElementType>
+    )
   }
 
   return (
@@ -68,12 +72,6 @@ function TableCell(props) {
       {content}
     </ElementType>
   )
-}
-
-TableCell._meta = {
-  name: 'TableCell',
-  type: META.TYPES.COLLECTION,
-  parent: 'Table',
 }
 
 TableCell.defaultProps = {

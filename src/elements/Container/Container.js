@@ -3,10 +3,10 @@ import PropTypes from 'prop-types'
 import React from 'react'
 
 import {
+  childrenUtils,
   customPropTypes,
   getElementType,
   getUnhandledProps,
-  META,
   SUI,
   useKeyOnly,
   useTextAlignProp,
@@ -16,30 +16,23 @@ import {
  * A container limits content to a maximum width.
  */
 function Container(props) {
-  const {
-    children,
-    className,
-    fluid,
-    text,
-    textAlign,
-  } = props
+  const { children, className, content, fluid, text, textAlign } = props
   const classes = cx(
     'ui',
     useKeyOnly(text, 'text'),
     useKeyOnly(fluid, 'fluid'),
     useTextAlignProp(textAlign),
     'container',
-    className
+    className,
   )
   const rest = getUnhandledProps(Container, props)
   const ElementType = getElementType(Container, props)
 
-  return <ElementType {...rest} className={classes}>{children}</ElementType>
-}
-
-Container._meta = {
-  name: 'Container',
-  type: META.TYPES.ELEMENT,
+  return (
+    <ElementType {...rest} className={classes}>
+      {childrenUtils.isNil(children) ? content : children}
+    </ElementType>
+  )
 }
 
 Container.propTypes = {
@@ -51,6 +44,9 @@ Container.propTypes = {
 
   /** Additional classes. */
   className: PropTypes.string,
+
+  /** Shorthand for primary content. */
+  content: customPropTypes.contentShorthand,
 
   /** Container has no maximum width. */
   fluid: PropTypes.bool,

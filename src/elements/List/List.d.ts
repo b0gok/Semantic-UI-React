@@ -2,15 +2,17 @@ import * as React from 'react';
 
 import {
   SemanticFLOATS,
+  SemanticShorthandCollection,
+  SemanticShorthandContent,
   SemanticSIZES,
   SemanticVERTICALALIGNMENTS
 } from '../..';
-import { default as ListContent } from './ListContent';
-import { default as ListDescription } from './ListDescription';
-import { default as ListHeader } from './ListHeader';
-import { default as ListIcon } from './ListIcon';
+import ListContent from './ListContent';
+import ListDescription from './ListDescription';
+import ListHeader from './ListHeader';
+import ListIcon from './ListIcon';
 import { default as ListItem, ListItemProps } from './ListItem';
-import { default as ListList } from './ListList';
+import ListList from './ListList';
 
 export interface ListProps {
   [key: string]: any;
@@ -33,6 +35,9 @@ export interface ListProps {
   /** Additional classes. */
   className?: string;
 
+  /** Shorthand for primary content. */
+  content?: SemanticShorthandContent;
+
   /** A list can show divisions between content. */
   divided?: boolean;
 
@@ -46,7 +51,7 @@ export interface ListProps {
   inverted?: boolean;
 
   /** Shorthand array of props for ListItem. */
-  items?: Array<any>;
+  items?: SemanticShorthandCollection<ListItemProps>;
 
   /** A list can be specially formatted for navigation links. */
   link?: boolean;

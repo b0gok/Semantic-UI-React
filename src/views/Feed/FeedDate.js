@@ -1,14 +1,8 @@
 import cx from 'classnames'
-import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
 
-import {
-  customPropTypes,
-  getElementType,
-  getUnhandledProps,
-  META,
-} from '../../lib'
+import { childrenUtils, customPropTypes, getElementType, getUnhandledProps } from '../../lib'
 
 /**
  * An event or an event summary can contain a date.
@@ -21,15 +15,9 @@ function FeedDate(props) {
 
   return (
     <ElementType {...rest} className={classes}>
-      {_.isNil(children) ? content : children}
+      {childrenUtils.isNil(children) ? content : children}
     </ElementType>
   )
-}
-
-FeedDate._meta = {
-  name: 'FeedDate',
-  parent: 'Feed',
-  type: META.TYPES.VIEW,
 }
 
 FeedDate.propTypes = {

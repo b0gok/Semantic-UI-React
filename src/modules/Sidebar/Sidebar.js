@@ -4,10 +4,10 @@ import React from 'react'
 
 import {
   AutoControlledComponent as Component,
+  childrenUtils,
   customPropTypes,
   getUnhandledProps,
   getElementType,
-  META,
   useKeyOnly,
 } from '../../lib'
 import SidebarPushable from './SidebarPushable'
@@ -22,13 +22,23 @@ class Sidebar extends Component {
     as: customPropTypes.as,
 
     /** Animation style. */
-    animation: PropTypes.oneOf(['overlay', 'push', 'scale down', 'uncover', 'slide out', 'slide along']),
+    animation: PropTypes.oneOf([
+      'overlay',
+      'push',
+      'scale down',
+      'uncover',
+      'slide out',
+      'slide along',
+    ]),
 
     /** Primary content. */
     children: PropTypes.node,
 
     /** Additional classes. */
     className: PropTypes.string,
+
+    /** Shorthand for primary content. */
+    content: customPropTypes.contentShorthand,
 
     /** Initial value of visible. */
     defaultVisible: PropTypes.bool,
@@ -47,20 +57,10 @@ class Sidebar extends Component {
     direction: 'left',
   }
 
-  static autoControlledProps = [
-    'visible',
-  ]
-
-  static _meta = {
-    name: 'Sidebar',
-    type: META.TYPES.MODULE,
-  }
+  static autoControlledProps = ['visible']
 
   static Pushable = SidebarPushable
-
   static Pusher = SidebarPusher
-
-  state = {}
 
   startAnimating = (duration = 500) => {
     clearTimeout(this.stopAnimatingTimer)
@@ -77,14 +77,7 @@ class Sidebar extends Component {
   }
 
   render() {
-    const {
-      animation,
-      className,
-      children,
-      direction,
-      visible,
-      width,
-    } = this.props
+    const { animation, className, children, content, direction, visible, width } = this.props
     const { animating } = this.state
 
     const classes = cx(
@@ -95,13 +88,17 @@ class Sidebar extends Component {
       useKeyOnly(animating, 'animating'),
       useKeyOnly(visible, 'visible'),
       'sidebar',
-      className
+      className,
     )
 
     const rest = getUnhandledProps(Sidebar, this.props)
     const ElementType = getElementType(Sidebar, this.props)
 
-    return <ElementType {...rest} className={classes}>{children}</ElementType>
+    return (
+      <ElementType {...rest} className={classes}>
+        {childrenUtils.isNil(children) ? content : children}
+      </ElementType>
+    )
   }
 }
 

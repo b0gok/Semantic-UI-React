@@ -1,14 +1,13 @@
 import cx from 'classnames'
-import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
 
 import {
+  childrenUtils,
   createShorthandFactory,
   customPropTypes,
   getElementType,
   getUnhandledProps,
-  META,
 } from '../../lib'
 
 /**
@@ -22,15 +21,9 @@ function MessageItem(props) {
 
   return (
     <ElementType {...rest} className={classes}>
-      {_.isNil(children) ? content : children}
+      {childrenUtils.isNil(children) ? content : children}
     </ElementType>
   )
-}
-
-MessageItem._meta = {
-  name: 'MessageItem',
-  parent: 'Message',
-  type: META.TYPES.COLLECTION,
 }
 
 MessageItem.propTypes = {
@@ -44,7 +37,7 @@ MessageItem.propTypes = {
   className: PropTypes.string,
 
   /** Shorthand for primary content. */
-  content: customPropTypes.itemShorthand,
+  content: customPropTypes.contentShorthand,
 }
 
 MessageItem.defaultProps = {

@@ -4,12 +4,11 @@ import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 
 import {
+  childrenUtils,
   customPropTypes,
   createShorthandFactory,
   getElementType,
   getUnhandledProps,
-  makeDebugger,
-  META,
   SUI,
   useKeyOnly,
   useKeyOrValueAndKey,
@@ -20,8 +19,6 @@ import Label from '../Label/Label'
 import ButtonContent from './ButtonContent'
 import ButtonGroup from './ButtonGroup'
 import ButtonOr from './ButtonOr'
-
-const debug = makeDebugger('button')
 
 /**
  * A Button indicates a possible user action.
@@ -38,13 +35,13 @@ class Button extends Component {
     active: PropTypes.bool,
 
     /** A button can animate to show hidden content. */
-    animated: PropTypes.oneOfType([
-      PropTypes.bool,
-      PropTypes.oneOf(['fade', 'vertical']),
-    ]),
+    animated: PropTypes.oneOfType([PropTypes.bool, PropTypes.oneOf(['fade', 'vertical'])]),
 
-    /** A button can be attached to the top or bottom of other content. */
-    attached: PropTypes.oneOf(['left', 'right', 'top', 'bottom']),
+    /** A button can be attached to other content. */
+    attached: PropTypes.oneOfType([
+      PropTypes.bool,
+      PropTypes.oneOf(['left', 'right', 'top', 'bottom']),
+    ]),
 
     /** A basic button is less pronounced. */
     basic: PropTypes.bool,
@@ -74,7 +71,13 @@ class Button extends Component {
     /** A button can have different colors */
     color: PropTypes.oneOf([
       ...SUI.COLORS,
-      'facebook', 'google plus', 'instagram', 'linkedin', 'twitter', 'vk', 'youtube',
+      'facebook',
+      'google plus',
+      'instagram',
+      'linkedin',
+      'twitter',
+      'vk',
+      'youtube',
     ]),
 
     /** A button can reduce its padding to fit into tighter spaces. */
@@ -104,11 +107,7 @@ class Button extends Component {
     inverted: PropTypes.bool,
 
     /** Add a Label by text, props object, or pass a <Label />. */
-    label: customPropTypes.some([
-      PropTypes.string,
-      PropTypes.object,
-      PropTypes.element,
-    ]),
+    label: customPropTypes.some([PropTypes.string, PropTypes.object, PropTypes.element]),
 
     /** A labeled button can format a Label or Icon to appear on the left or right. */
     labelPosition: PropTypes.oneOf(['right', 'left']),
@@ -132,6 +131,9 @@ class Button extends Component {
     /** A button can be formatted to show different levels of emphasis. */
     primary: PropTypes.bool,
 
+    /** The role of the HTML element. */
+    role: PropTypes.string,
+
     /** A button can be formatted to show different levels of emphasis. */
     secondary: PropTypes.bool,
 
@@ -139,10 +141,7 @@ class Button extends Component {
     size: PropTypes.oneOf(SUI.SIZES),
 
     /** A button can receive focus. */
-    tabIndex: PropTypes.oneOfType([
-      PropTypes.number,
-      PropTypes.string,
-    ]),
+    tabIndex: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 
     /** A button can be formatted to toggle on and off. */
     toggle: PropTypes.bool,
@@ -150,11 +149,7 @@ class Button extends Component {
 
   static defaultProps = {
     as: 'button',
-  }
-
-  static _meta = {
-    name: 'Button',
-    type: META.TYPES.ELEMENT,
+    role: 'button',
   }
 
   static Content = ButtonContent
@@ -167,7 +162,7 @@ class Button extends Component {
     if (!_.isNil(attached) || !_.isNil(label)) return 'div'
   }
 
-  computeTabIndex = ElementType => {
+  computeTabIndex = (ElementType) => {
     const { disabled, tabIndex } = this.props
 
     if (!_.isNil(tabIndex)) return tabIndex
@@ -175,22 +170,26 @@ class Button extends Component {
     if (ElementType === 'div') return 0
   }
 
+  focus = () => _.invoke(this.ref, 'focus')
+
   handleClick = (e) => {
-    const { disabled, onClick } = this.props
+    const { disabled } = this.props
 
     if (disabled) {
       e.preventDefault()
       return
     }
 
-    if (onClick) onClick(e, this.props)
+    _.invoke(this.props, 'onClick', e, this.props)
   }
+
+  handleRef = c => (this.ref = c)
 
   hasIconClass = () => {
     const { labelPosition, children, content, icon } = this.props
 
     if (icon === true) return true
-    return icon && (labelPosition || (_.isNil(children) && _.isNil(content)))
+    return icon && (labelPosition || (childrenUtils.isNil(children) && _.isNil(content)))
   }
 
   render() {
@@ -217,6 +216,7 @@ class Button extends Component {
       positive,
       primary,
       secondary,
+      role,
       size,
       toggle,
     } = this.props
@@ -240,68 +240,56 @@ class Button extends Component {
       useKeyOrValueAndKey(animated, 'animated'),
       useKeyOrValueAndKey(attached, 'attached'),
     )
-    const labeledClasses = cx(
-      useKeyOrValueAndKey(labelPosition || !!label, 'labeled'),
-    )
-    const wrapperClasses = cx(
-      useKeyOnly(disabled, 'disabled'),
-      useValueAndKey(floated, 'floated'),
-    )
+    const labeledClasses = cx(useKeyOrValueAndKey(labelPosition || !!label, 'labeled'))
+    const wrapperClasses = cx(useKeyOnly(disabled, 'disabled'), useValueAndKey(floated, 'floated'))
 
     const rest = getUnhandledProps(Button, this.props)
     const ElementType = getElementType(Button, this.props, this.computeElementType)
     const tabIndex = this.computeTabIndex(ElementType)
 
-    if (!_.isNil(children)) {
-      const classes = cx('ui', baseClasses, wrapperClasses, labeledClasses, 'button', className)
-      debug('render children:', { classes })
-
-      return (
-        <ElementType {...rest} className={classes} tabIndex={tabIndex} onClick={this.handleClick}>
-          {children}
-        </ElementType>
-      )
-    }
-
-    const labelElement = Label.create(label, { defaultProps: {
-      basic: true,
-      pointing: labelPosition === 'left' ? 'right' : 'left',
-    } })
-
-    if (labelElement) {
-      const classes = cx('ui', baseClasses, 'button', className)
+    if (!_.isNil(label)) {
+      const buttonClasses = cx('ui', baseClasses, 'button', className)
       const containerClasses = cx('ui', labeledClasses, 'button', className, wrapperClasses)
-
-      debug('render label:', { classes, containerClasses }, this.props)
+      const labelElement = Label.create(label, {
+        defaultProps: {
+          basic: true,
+          pointing: labelPosition === 'left' ? 'right' : 'left',
+        },
+        autoGenerateKey: false,
+      })
 
       return (
         <ElementType {...rest} className={containerClasses} onClick={this.handleClick}>
           {labelPosition === 'left' && labelElement}
-          <button className={classes} tabIndex={tabIndex}>
-            {Icon.create(icon)} {content}
+          <button
+            className={buttonClasses}
+            disabled={disabled}
+            ref={this.handleRef}
+            tabIndex={tabIndex}
+          >
+            {Icon.create(icon, { autoGenerateKey: false })} {content}
           </button>
           {(labelPosition === 'right' || !labelPosition) && labelElement}
         </ElementType>
       )
     }
 
-    if (!_.isNil(icon) && _.isNil(label)) {
-      const classes = cx('ui', labeledClasses, baseClasses, 'button', className, wrapperClasses)
-      debug('render icon && !label:', { classes })
-
-      return (
-        <ElementType {...rest} className={classes} tabIndex={tabIndex} onClick={this.handleClick}>
-          {Icon.create(icon)} {content}
-        </ElementType>
-      )
-    }
-
-    const classes = cx('ui', labeledClasses, baseClasses, 'button', className, wrapperClasses)
-    debug('render default:', { classes })
+    const classes = cx('ui', baseClasses, wrapperClasses, labeledClasses, 'button', className)
+    const hasChildren = !childrenUtils.isNil(children)
 
     return (
-      <ElementType {...rest} className={classes} tabIndex={tabIndex} onClick={this.handleClick}>
-        {content}
+      <ElementType
+        {...rest}
+        className={classes}
+        disabled={(disabled && ElementType === 'button') || undefined}
+        onClick={this.handleClick}
+        ref={this.handleRef}
+        role={role}
+        tabIndex={tabIndex}
+      >
+        {hasChildren && children}
+        {!hasChildren && Icon.create(icon, { autoGenerateKey: false })}
+        {!hasChildren && content}
       </ElementType>
     )
   }

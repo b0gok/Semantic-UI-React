@@ -1,14 +1,13 @@
 import cx from 'classnames'
-import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
 
 import {
+  childrenUtils,
   createShorthandFactory,
   customPropTypes,
   getElementType,
   getUnhandledProps,
-  META,
 } from '../../lib'
 
 /**
@@ -22,15 +21,9 @@ function ItemHeader(props) {
 
   return (
     <ElementType {...rest} className={classes}>
-      {_.isNil(children) ? content : children}
+      {childrenUtils.isNil(children) ? content : children}
     </ElementType>
   )
-}
-
-ItemHeader._meta = {
-  name: 'ItemHeader',
-  parent: 'Item',
-  type: META.TYPES.VIEW,
 }
 
 ItemHeader.propTypes = {

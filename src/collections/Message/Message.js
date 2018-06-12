@@ -4,11 +4,11 @@ import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 
 import {
+  childrenUtils,
   createHTMLParagraph,
   customPropTypes,
   getElementType,
   getUnhandledProps,
-  META,
   SUI,
   useKeyOnly,
   useKeyOrValueAndKey,
@@ -29,10 +29,7 @@ export default class Message extends Component {
     as: customPropTypes.as,
 
     /** A message can be formatted to attach itself to other content. */
-    attached: PropTypes.oneOfType([
-      PropTypes.bool,
-      PropTypes.oneOf(['bottom']),
-    ]),
+    attached: PropTypes.oneOfType([PropTypes.bool, PropTypes.oneOf(['bottom', 'top'])]),
 
     /** Primary content. */
     children: PropTypes.node,
@@ -62,10 +59,7 @@ export default class Message extends Component {
     hidden: PropTypes.bool,
 
     /** A message can contain an icon. */
-    icon: PropTypes.oneOfType([
-      customPropTypes.itemShorthand,
-      PropTypes.bool,
-    ]),
+    icon: PropTypes.oneOfType([customPropTypes.itemShorthand, PropTypes.bool]),
 
     /** A message may be formatted to display information. */
     info: PropTypes.bool,
@@ -101,17 +95,12 @@ export default class Message extends Component {
     warning: PropTypes.bool,
   }
 
-  static _meta = {
-    name: 'Message',
-    type: META.TYPES.COLLECTION,
-  }
-
   static Content = MessageContent
   static Header = MessageHeader
   static List = MessageList
   static Item = MessageItem
 
-  handleDismiss = e => {
+  handleDismiss = (e) => {
     const { onDismiss } = this.props
 
     if (onDismiss) onDismiss(e, this.props)
@@ -165,7 +154,7 @@ export default class Message extends Component {
     const rest = getUnhandledProps(Message, this.props)
     const ElementType = getElementType(Message, this.props)
 
-    if (!_.isNil(children)) {
+    if (!childrenUtils.isNil(children)) {
       return (
         <ElementType {...rest} className={classes}>
           {dismissIcon}
@@ -177,12 +166,12 @@ export default class Message extends Component {
     return (
       <ElementType {...rest} className={classes}>
         {dismissIcon}
-        {Icon.create(icon)}
+        {Icon.create(icon, { autoGenerateKey: false })}
         {(!_.isNil(header) || !_.isNil(content) || !_.isNil(list)) && (
           <MessageContent>
-            {MessageHeader.create(header)}
-            {MessageList.create(list)}
-            {createHTMLParagraph(content)}
+            {MessageHeader.create(header, { autoGenerateKey: false })}
+            {MessageList.create(list, { autoGenerateKey: false })}
+            {createHTMLParagraph(content, { autoGenerateKey: false })}
           </MessageContent>
         )}
       </ElementType>

@@ -1,13 +1,14 @@
 import * as React from 'react';
 
-import { default as CommentAction } from './CommentAction';
-import { default as CommentActions } from './CommentActions';
-import { default as CommentAuthor } from './CommentAuthor';
-import { default as CommentAvatar } from './CommentAvatar';
-import { default as CommentContent } from './CommentContent';
-import { default as CommentGroup } from './CommentGroup';
-import { default as CommentMetadata } from './CommentMetadata';
-import { default as CommentText } from './CommentText';
+import { SemanticShorthandContent } from '../..';
+import CommentAction from './CommentAction';
+import CommentActions from './CommentActions';
+import CommentAuthor from './CommentAuthor';
+import CommentAvatar from './CommentAvatar';
+import CommentContent from './CommentContent';
+import CommentGroup from './CommentGroup';
+import CommentMetadata from './CommentMetadata';
+import CommentText from './CommentText';
 
 export interface CommentProps {
   [key: string]: any;
@@ -23,6 +24,9 @@ export interface CommentProps {
 
   /** Comment can be collapsed, or hidden from view. */
   collapsed?: boolean;
+
+  /** Shorthand for primary content. */
+  content?: SemanticShorthandContent;
 }
 
 interface CommentComponent extends React.StatelessComponent<CommentProps> {

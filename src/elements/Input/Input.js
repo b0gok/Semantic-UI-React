@@ -4,13 +4,13 @@ import PropTypes from 'prop-types'
 import React, { Children, cloneElement, Component } from 'react'
 
 import {
+  childrenUtils,
   createHTMLInput,
   createShorthandFactory,
   customPropTypes,
   getElementType,
   getUnhandledProps,
-  META,
-  partitionHTMLInputProps,
+  partitionHTMLProps,
   SUI,
   useKeyOnly,
   useValueAndKey,
@@ -32,10 +32,7 @@ class Input extends Component {
     as: customPropTypes.as,
 
     /** An Input can be formatted to alert the user to an action they may perform. */
-    action: PropTypes.oneOfType([
-      PropTypes.bool,
-      customPropTypes.itemShorthand,
-    ]),
+    action: PropTypes.oneOfType([PropTypes.bool, customPropTypes.itemShorthand]),
 
     /** An action can appear along side an Input on the left or right. */
     actionPosition: PropTypes.oneOf(['left']),
@@ -52,17 +49,14 @@ class Input extends Component {
     /** An Input field can show the data contains errors. */
     error: PropTypes.bool,
 
-    /** Take on the size of it's container. */
+    /** Take on the size of its container. */
     fluid: PropTypes.bool,
 
     /** An Input field can show a user is currently interacting with it. */
     focus: PropTypes.bool,
 
     /** Optional Icon to display inside the Input. */
-    icon: PropTypes.oneOfType([
-      PropTypes.bool,
-      customPropTypes.itemShorthand,
-    ]),
+    icon: PropTypes.oneOfType([PropTypes.bool, customPropTypes.itemShorthand]),
 
     /** An Icon can appear inside an Input on the left or right. */
     iconPosition: PropTypes.oneOf(['left']),
@@ -94,10 +88,7 @@ class Input extends Component {
     size: PropTypes.oneOf(SUI.SIZES),
 
     /** An Input can receive focus. */
-    tabIndex: PropTypes.oneOfType([
-      PropTypes.number,
-      PropTypes.string,
-    ]),
+    tabIndex: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 
     /** Transparent Input has no background. */
     transparent: PropTypes.bool,
@@ -110,9 +101,11 @@ class Input extends Component {
     type: 'text',
   }
 
-  static _meta = {
-    name: 'Input',
-    type: META.TYPES.ELEMENT,
+  computeIcon = () => {
+    const { loading, icon } = this.props
+
+    if (!_.isNil(icon)) return icon
+    if (loading) return 'spinner'
   }
 
   computeTabIndex = () => {
@@ -122,19 +115,18 @@ class Input extends Component {
     if (disabled) return -1
   }
 
-  focus = () => (this.inputRef.focus())
+  focus = () => this.inputRef.focus()
 
   handleChange = (e) => {
-    const { onChange } = this.props
     const value = _.get(e, 'target.value')
 
-    onChange(e, { ...this.props, value })
+    _.invoke(this.props, 'onChange', e, { ...this.props, value })
   }
 
   handleChildOverrides = (child, defaultProps) => ({
     ...defaultProps,
     ...child.props,
-    ref: c => {
+    ref: (c) => {
       _.invoke(child, 'ref', c)
       this.handleInputRef(c)
     },
@@ -143,20 +135,23 @@ class Input extends Component {
   handleInputRef = c => (this.inputRef = c)
 
   partitionProps = () => {
-    const { disabled, onChange, type } = this.props
+    const { disabled, type } = this.props
 
     const tabIndex = this.computeTabIndex()
     const unhandled = getUnhandledProps(Input, this.props)
-    const [htmlInputProps, rest] = partitionHTMLInputProps(unhandled)
+    const [htmlInputProps, rest] = partitionHTMLProps(unhandled)
 
-    htmlInputProps.ref = this.handleInputRef
-    htmlInputProps.type = type
-
-    if (disabled) htmlInputProps.disabled = disabled
-    if (onChange) htmlInputProps.onChange = this.handleChange
-    if (tabIndex) htmlInputProps.tabIndex = tabIndex
-
-    return [htmlInputProps, rest]
+    return [
+      {
+        ...htmlInputProps,
+        disabled,
+        type,
+        tabIndex,
+        onChange: this.handleChange,
+        ref: this.handleInputRef,
+      },
+      rest,
+    ]
   }
 
   render() {
@@ -192,7 +187,7 @@ class Input extends Component {
       useKeyOnly(loading, 'loading'),
       useKeyOnly(transparent, 'transparent'),
       useValueAndKey(actionPosition, 'action') || useKeyOnly(action, 'action'),
-      useValueAndKey(iconPosition, 'icon') || useKeyOnly(icon, 'icon'),
+      useValueAndKey(iconPosition, 'icon') || useKeyOnly(icon || loading, 'icon'),
       useValueAndKey(labelPosition, 'labeled') || useKeyOnly(label, 'labeled'),
       'input',
       className,
@@ -202,20 +197,23 @@ class Input extends Component {
 
     // Render with children
     // ----------------------------------------
-    if (!_.isNil(children)) {
+    if (!childrenUtils.isNil(children)) {
       // add htmlInputProps to the `<input />` child
       const childElements = _.map(Children.toArray(children), (child) => {
         if (child.type !== 'input') return child
         return cloneElement(child, this.handleChildOverrides(child, htmlInputProps))
       })
 
-      return <ElementType {...rest} className={classes}>{childElements}</ElementType>
+      return (
+        <ElementType {...rest} className={classes}>
+          {childElements}
+        </ElementType>
+      )
     }
 
     // Render Shorthand
     // ----------------------------------------
-    const actionElement = Button.create(action, { defaultProps: { className: 'button' } })
-    const iconElement = Icon.create(icon)
+    const actionElement = Button.create(action, { autoGenerateKey: false })
     const labelElement = Label.create(label, {
       defaultProps: {
         className: cx(
@@ -224,16 +222,16 @@ class Input extends Component {
           _.includes(labelPosition, 'corner') && labelPosition,
         ),
       },
+      autoGenerateKey: false,
     })
 
     return (
       <ElementType {...rest} className={classes}>
         {actionPosition === 'left' && actionElement}
-        {iconPosition === 'left' && iconElement}
         {labelPosition !== 'right' && labelElement}
-        {createHTMLInput(input || type, { defaultProps: htmlInputProps })}
+        {createHTMLInput(input || type, { defaultProps: htmlInputProps, autoGenerateKey: false })}
         {actionPosition !== 'left' && actionElement}
-        {iconPosition !== 'left' && iconElement}
+        {Icon.create(this.computeIcon(), { autoGenerateKey: false })}
         {labelPosition === 'right' && labelElement}
       </ElementType>
     )

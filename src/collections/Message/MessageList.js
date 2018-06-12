@@ -4,11 +4,11 @@ import PropTypes from 'prop-types'
 import React from 'react'
 
 import {
+  childrenUtils,
   createShorthandFactory,
   customPropTypes,
   getElementType,
   getUnhandledProps,
-  META,
 } from '../../lib'
 import MessageItem from './MessageItem'
 
@@ -23,15 +23,9 @@ function MessageList(props) {
 
   return (
     <ElementType {...rest} className={classes}>
-      {_.isNil(children) ? _.map(items, MessageItem.create) : children}
+      {childrenUtils.isNil(children) ? _.map(items, MessageItem.create) : children}
     </ElementType>
   )
-}
-
-MessageList._meta = {
-  name: 'MessageList',
-  parent: 'Message',
-  type: META.TYPES.COLLECTION,
 }
 
 MessageList.propTypes = {

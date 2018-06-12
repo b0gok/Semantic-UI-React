@@ -1,13 +1,13 @@
 import cx from 'classnames'
-import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
 
 import {
+  childrenUtils,
+  createShorthandFactory,
   customPropTypes,
   getElementType,
   getUnhandledProps,
-  META,
 } from '../../lib'
 
 function LabelDetail(props) {
@@ -18,15 +18,9 @@ function LabelDetail(props) {
 
   return (
     <ElementType {...rest} className={classes}>
-      {_.isNil(children) ? content : children}
+      {childrenUtils.isNil(children) ? content : children}
     </ElementType>
   )
-}
-
-LabelDetail._meta = {
-  name: 'LabelDetail',
-  parent: 'Label',
-  type: META.TYPES.ELEMENT,
 }
 
 LabelDetail.propTypes = {
@@ -42,5 +36,7 @@ LabelDetail.propTypes = {
   /** Shorthand for primary content. */
   content: customPropTypes.contentShorthand,
 }
+
+LabelDetail.create = createShorthandFactory(LabelDetail, val => ({ content: val }))
 
 export default LabelDetail

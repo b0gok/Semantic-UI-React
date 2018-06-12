@@ -2,15 +2,16 @@ import * as React from 'react';
 
 import {
   SemanticCOLORS,
+  SemanticShorthandItem,
   SemanticVERTICALALIGNMENTS,
   SemanticWIDTHS
 } from '../..';
-import { default as TableBody } from './TableBody';
-import { default as TableCell } from './TableCell';
-import { default as TableFooter } from './TableFooter';
-import { default as TableHeader } from './TableHeader';
-import { default as TableHeaderCell } from './TableHeaderCell';
-import { default as TableRow } from './TableRow';
+import TableBody from './TableBody';
+import TableCell from './TableCell';
+import TableFooter from './TableFooter';
+import TableHeader from './TableHeader';
+import TableHeaderCell from './TableHeaderCell';
+import { default as TableRow, TableRowProps } from './TableRow';
 
 export interface TableProps {
   [key: string]: any;
@@ -54,10 +55,10 @@ export interface TableProps {
   fixed?: boolean;
 
   /** Shorthand for a TableRow to be placed within Table.Footer. */
-  footerRow?: any;
+  footerRow?: SemanticShorthandItem<TableRowProps>;
 
   /** Shorthand for a TableRow to be placed within Table.Header. */
-  headerRow?: any;
+  headerRow?: SemanticShorthandItem<TableRowProps>;
 
   /** A table's colors can be inverted. */
   inverted?: boolean;

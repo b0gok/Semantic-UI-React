@@ -1,14 +1,14 @@
 import cx from 'classnames'
-import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
 
 import {
   AutoControlledComponent as Component,
+  childrenUtils,
+  createHTMLIframe,
   customPropTypes,
   getElementType,
   getUnhandledProps,
-  META,
   useKeyOnly,
 } from '../../lib'
 import Icon from '../../elements/Icon'
@@ -27,17 +27,11 @@ export default class Embed extends Component {
     /** An embed can specify an alternative aspect ratio. */
     aspectRatio: PropTypes.oneOf(['4:3', '16:9', '21:9']),
 
-     /** Setting to true or false will force autoplay. */
-    autoplay: customPropTypes.every([
-      customPropTypes.demand(['source']),
-      PropTypes.bool,
-    ]),
+    /** Setting to true or false will force autoplay. */
+    autoplay: customPropTypes.every([customPropTypes.demand(['source']), PropTypes.bool]),
 
     /** Whether to show networks branded UI like title cards, or after video calls to action. */
-    brandedUI: customPropTypes.every([
-      customPropTypes.demand(['source']),
-      PropTypes.bool,
-    ]),
+    brandedUI: customPropTypes.every([customPropTypes.demand(['source']), PropTypes.bool]),
 
     /** Primary content. */
     children: PropTypes.node,
@@ -46,27 +40,27 @@ export default class Embed extends Component {
     className: PropTypes.string,
 
     /** Specifies a default chrome color with Vimeo or YouTube. */
-    color: customPropTypes.every([
-      customPropTypes.demand(['source']),
-      PropTypes.string,
-    ]),
+    color: customPropTypes.every([customPropTypes.demand(['source']), PropTypes.string]),
+
+    /** Shorthand for primary content. */
+    content: customPropTypes.contentShorthand,
 
     /** Initial value of active. */
     defaultActive: PropTypes.bool,
 
-    /** Whether to show networks branded UI like title cards, or after video calls to action. */
-    hd: customPropTypes.every([
-      customPropTypes.demand(['source']),
-      PropTypes.bool,
-    ]),
+    /** Whether to prefer HD content. */
+    hd: customPropTypes.every([customPropTypes.demand(['source']), PropTypes.bool]),
 
-     /** Specifies an icon to use with placeholder content. */
+    /** Specifies an icon to use with placeholder content. */
     icon: customPropTypes.itemShorthand,
 
     /** Specifies an id for source. */
-    id: customPropTypes.every([
+    id: customPropTypes.every([customPropTypes.demand(['source']), PropTypes.string]),
+
+    /** Shorthand for HTML iframe. */
+    iframe: customPropTypes.every([
       customPropTypes.demand(['source']),
-      PropTypes.string,
+      customPropTypes.itemShorthand,
     ]),
 
     /**
@@ -87,26 +81,10 @@ export default class Embed extends Component {
     ]),
 
     /** Specifies a url to use for embed. */
-    url: customPropTypes.every([
-      customPropTypes.disallow(['source']),
-      PropTypes.string,
-    ]),
+    url: customPropTypes.every([customPropTypes.disallow(['source']), PropTypes.string]),
   }
 
-  static autoControlledProps = [
-    'active',
-  ]
-
-  static defaultProps = {
-    icon: 'video play',
-  }
-
-  static _meta = {
-    name: 'Embed',
-    type: META.TYPES.MODULE,
-  }
-
-  state = {}
+  static autoControlledProps = ['active']
 
   getSrc() {
     const {
@@ -128,6 +106,7 @@ export default class Embed extends Component {
         `&amp;hq=${hd}`,
         '&amp;jsapi=false',
         `&amp;modestbranding=${brandedUI}`,
+        `&amp;rel=${brandedUI ? 0 : 1}`,
       ].join('')
     }
 
@@ -158,19 +137,15 @@ export default class Embed extends Component {
     const { aspectRatio, className, icon, placeholder } = this.props
     const { active } = this.state
 
-    const classes = cx(
-      'ui',
-      aspectRatio,
-      useKeyOnly(active, 'active'),
-      'embed',
-      className,
-    )
+    const classes = cx('ui', aspectRatio, useKeyOnly(active, 'active'), 'embed', className)
     const rest = getUnhandledProps(Embed, this.props)
     const ElementType = getElementType(Embed, this.props)
 
+    const iconShorthand = icon !== undefined ? icon : 'video play'
+
     return (
       <ElementType {...rest} className={classes} onClick={this.handleClick}>
-        {Icon.create(icon)}
+        {Icon.create(iconShorthand, { autoGenerateKey: false })}
         {placeholder && <img className='placeholder' src={placeholder} />}
         {this.renderEmbed()}
       </ElementType>
@@ -178,23 +153,27 @@ export default class Embed extends Component {
   }
 
   renderEmbed() {
-    const { children, source } = this.props
+    const { children, content, iframe, source } = this.props
     const { active } = this.state
 
     if (!active) return null
-    if (!_.isNil(children)) return <div className='embed'>{children}</div>
+    if (!childrenUtils.isNil(children)) return <div className='embed'>{children}</div>
+    if (!childrenUtils.isNil(content)) return <div className='embed'>{content}</div>
 
     return (
       <div className='embed'>
-        <iframe
-          title={`Embedded content from ${source}.`}
-          allowFullScreen=''
-          frameBorder='0'
-          height='100%'
-          scrolling='no'
-          src={this.getSrc()}
-          width='100%'
-        />
+        {createHTMLIframe(childrenUtils.isNil(iframe) ? this.getSrc() : iframe, {
+          defaultProps: {
+            allowFullScreen: false,
+            frameBorder: 0,
+            height: '100%',
+            scrolling: 'no',
+            src: this.getSrc(),
+            title: `Embedded content from ${source}.`,
+            width: '100%',
+          },
+          autoGenerateKey: false,
+        })}
       </div>
     )
   }

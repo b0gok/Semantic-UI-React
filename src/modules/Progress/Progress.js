@@ -4,11 +4,11 @@ import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 
 import {
+  childrenUtils,
   createHTMLDivision,
   customPropTypes,
   getElementType,
   getUnhandledProps,
-  META,
   SUI,
   useKeyOnly,
   useValueAndKey,
@@ -40,6 +40,9 @@ class Progress extends Component {
     /** A progress bar can have different colors. */
     color: PropTypes.oneOf(SUI.COLORS),
 
+    /** Shorthand for primary content. */
+    content: customPropTypes.contentShorthand,
+
     /** A progress bar be disabled. */
     disabled: PropTypes.bool,
 
@@ -58,20 +61,14 @@ class Progress extends Component {
     /** Current percent complete. */
     percent: customPropTypes.every([
       customPropTypes.disallow(['total', 'value']),
-      PropTypes.oneOfType([
-        PropTypes.number,
-        PropTypes.string,
-      ]),
+      PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     ]),
 
     /** Decimal point precision for calculated progress. */
     precision: PropTypes.number,
 
     /** A progress bar can contain a text value indicating current progress. */
-    progress: PropTypes.oneOfType([
-      PropTypes.bool,
-      PropTypes.oneOf(['percent', 'ratio']),
-    ]),
+    progress: PropTypes.oneOfType([PropTypes.bool, PropTypes.oneOf(['percent', 'ratio', 'value'])]),
 
     /** A progress bar can vary in size. */
     size: PropTypes.oneOf(_.without(SUI.SIZES, 'mini', 'huge', 'massive')),
@@ -79,52 +76,46 @@ class Progress extends Component {
     /** A progress bar can show a success state. */
     success: PropTypes.bool,
 
-    /**
-     * For use with value.
-     * Together, these will calculate the percent.
-     * Mutually excludes percent.
-     */
+    /** For use with value. Together, these will calculate the percent. Mutually excludes percent. */
     total: customPropTypes.every([
       customPropTypes.demand(['value']),
       customPropTypes.disallow(['percent']),
-      PropTypes.oneOfType([
-        PropTypes.number,
-        PropTypes.string,
-      ]),
+      PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     ]),
 
-    /**
-     * For use with total. Together, these will calculate the percent. Mutually excludes percent.
-     */
+    /** For use with total. Together, these will calculate the percent. Mutually excludes percent. */
     value: customPropTypes.every([
-      customPropTypes.demand(['total']),
       customPropTypes.disallow(['percent']),
-      PropTypes.oneOfType([
-        PropTypes.number,
-        PropTypes.string,
-      ]),
+      PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     ]),
 
     /** A progress bar can show a warning state. */
     warning: PropTypes.bool,
   }
 
-  static _meta = {
-    name: 'Progress',
-    type: META.TYPES.MODULE,
-  }
-
   calculatePercent = () => {
     const { percent, total, value } = this.props
 
     if (!_.isUndefined(percent)) return percent
-    if (!_.isUndefined(total) && !_.isUndefined(value)) return value / total * 100
+    if (!_.isUndefined(total) && !_.isUndefined(value)) return (value / total) * 100
+  }
+
+  computeValueText = (percent) => {
+    const { progress, total, value } = this.props
+
+    if (progress === 'value') return value
+    if (progress === 'ratio') return `${value}/${total}`
+    return `${percent}%`
   }
 
   getPercent = () => {
-    const { precision } = this.props
+    const { precision, progress, total, value } = this.props
     const percent = _.clamp(this.calculatePercent(), 0, 100)
 
+    if (!_.isUndefined(total) && !_.isUndefined(value) && progress === 'value') {
+      return (value / total) * 100
+    }
+    if (progress === 'value') return value
     if (_.isUndefined(precision)) return percent
     return _.round(percent, precision)
   }
@@ -136,26 +127,21 @@ class Progress extends Component {
   }
 
   renderLabel = () => {
-    const { children, label } = this.props
+    const { children, content, label } = this.props
 
-    if (!_.isNil(children)) return <div className='label'>{children}</div>
-    return createHTMLDivision(label, { defaultProps: { className: 'label' } })
+    if (!childrenUtils.isNil(children)) return <div className='label'>{children}</div>
+    if (!childrenUtils.isNil(content)) return <div className='label'>{content}</div>
+    return createHTMLDivision(label, {
+      autoGenerateKey: false,
+      defaultProps: { className: 'label' },
+    })
   }
 
-  renderProgress = percent => {
-    const {
-      precision,
-      progress,
-      total,
-      value,
-    } = this.props
+  renderProgress = (percent) => {
+    const { precision, progress } = this.props
 
     if (!progress && _.isUndefined(precision)) return
-    return (
-      <div className='progress'>
-        { progress !== 'ratio' ? `${percent}%` : `${value}/${total}` }
-      </div>
-    )
+    return <div className='progress'>{this.computeValueText(percent)}</div>
   }
 
   render() {
@@ -190,7 +176,7 @@ class Progress extends Component {
     )
     const rest = getUnhandledProps(Progress, this.props)
     const ElementType = getElementType(Progress, this.props)
-    const percent = this.getPercent()
+    const percent = this.getPercent() || 0
 
     return (
       <ElementType {...rest} className={classes} data-percent={Math.floor(percent)}>

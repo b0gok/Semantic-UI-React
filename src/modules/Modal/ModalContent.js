@@ -1,14 +1,13 @@
 import cx from 'classnames'
-import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
 
 import {
+  childrenUtils,
   createShorthandFactory,
   customPropTypes,
   getElementType,
   getUnhandledProps,
-  META,
   useKeyOnly,
 } from '../../lib'
 
@@ -16,32 +15,22 @@ import {
  * A modal can contain content.
  */
 function ModalContent(props) {
-  const {
-    children,
-    className,
-    content,
-    image,
-  } = props
+  const { children, className, content, image, scrolling } = props
 
   const classes = cx(
     className,
     useKeyOnly(image, 'image'),
-    'content'
+    useKeyOnly(scrolling, 'scrolling'),
+    'content',
   )
   const rest = getUnhandledProps(ModalContent, props)
   const ElementType = getElementType(ModalContent, props)
 
   return (
     <ElementType {...rest} className={classes}>
-      {_.isNil(children) ? content : children}
+      {childrenUtils.isNil(children) ? content : children}
     </ElementType>
   )
-}
-
-ModalContent._meta = {
-  name: 'ModalContent',
-  type: META.TYPES.MODULE,
-  parent: 'Modal',
 }
 
 ModalContent.propTypes = {
@@ -59,6 +48,9 @@ ModalContent.propTypes = {
 
   /** A modal can contain image content. */
   image: PropTypes.bool,
+
+  /** A modal can use the entire size of the screen. */
+  scrolling: PropTypes.bool,
 }
 
 ModalContent.create = createShorthandFactory(ModalContent, content => ({ content }))

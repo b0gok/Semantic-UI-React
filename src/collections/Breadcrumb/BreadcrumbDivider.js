@@ -4,11 +4,11 @@ import PropTypes from 'prop-types'
 import React from 'react'
 
 import {
+  childrenUtils,
   createShorthandFactory,
   customPropTypes,
   getUnhandledProps,
   getElementType,
-  META,
 } from '../../lib'
 import Icon from '../../elements/Icon'
 
@@ -16,31 +16,32 @@ import Icon from '../../elements/Icon'
  * A divider sub-component for Breadcrumb component.
  */
 function BreadcrumbDivider(props) {
-  const {
-    children,
-    className,
-    content,
-    icon,
-  } = props
+  const { children, className, content, icon } = props
 
   const classes = cx('divider', className)
   const rest = getUnhandledProps(BreadcrumbDivider, props)
   const ElementType = getElementType(BreadcrumbDivider, props)
 
-  if (!_.isNil(icon)) return Icon.create(icon, { defaultProps: { ...rest, className: classes } })
-  if (!_.isNil(content)) return <ElementType {...rest} className={classes}>{content}</ElementType>
+  if (!_.isNil(icon)) {
+    return Icon.create(icon, {
+      defaultProps: { ...rest, className: classes },
+      autoGenerateKey: false,
+    })
+  }
+
+  if (!_.isNil(content)) {
+    return (
+      <ElementType {...rest} className={classes}>
+        {content}
+      </ElementType>
+    )
+  }
 
   return (
     <ElementType {...rest} className={classes}>
-      {_.isNil(children) ? '/' : children}
+      {childrenUtils.isNil(children) ? '/' : children}
     </ElementType>
   )
-}
-
-BreadcrumbDivider._meta = {
-  name: 'BreadcrumbDivider',
-  type: META.TYPES.COLLECTION,
-  parent: 'Breadcrumb',
 }
 
 BreadcrumbDivider.propTypes = {

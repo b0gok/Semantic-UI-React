@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import { SemanticCOLORS } from '../..';
-import { default as IconGroup } from './IconGroup';
+import { SemanticCOLORS, SemanticICONS } from '../..';
+import IconGroup from './IconGroup';
 
 export type IconSizeProp = 'mini' | 'tiny' | 'small' | 'large' | 'big' | 'huge' | 'massive';
 
@@ -45,20 +45,20 @@ export interface IconProps {
   loading?: boolean;
 
   /** Name of the icon. */
-  name?: string;
+  name?: SemanticICONS;
 
   /** Icon can rotated. */
   rotated?: 'clockwise' | 'counterclockwise';
 
   /** Size of the icon. */
   size?: IconSizeProp;
+
+  /** Icon can have an aria label. */
+  'aria-label'?: string;
 }
 
-interface IconComponent extends React.StatelessComponent<IconProps> {
-  Group: typeof IconGroup;
+declare class Icon extends React.Component<IconProps, {}> {
+  static Group: typeof IconGroup;
 }
-
-declare const Icon: IconComponent;
 
 export default Icon;
-

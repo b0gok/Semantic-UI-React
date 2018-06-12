@@ -1,15 +1,9 @@
 import cx from 'classnames'
+import keyboardKey from 'keyboard-key'
 import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 
-import {
-  customPropTypes,
-  getElementType,
-  getUnhandledProps,
-  META,
-  useKeyOnly,
-  keyboardKey,
-} from '../../lib'
+import { customPropTypes, getElementType, getUnhandledProps, useKeyOnly } from '../../lib'
 
 /**
  * An internal icon sub-component for Rating component
@@ -56,14 +50,8 @@ export default class RatingIcon extends Component {
     selected: PropTypes.bool,
   }
 
-  defaultProps = {
+  static defaultProps = {
     as: 'i',
-  }
-
-  static _meta = {
-    name: 'RatingIcon',
-    parent: 'Rating',
-    type: META.TYPES.MODULE,
   }
 
   handleClick = (e) => {
@@ -85,7 +73,6 @@ export default class RatingIcon extends Component {
           onClick(e, this.props)
           break
         default:
-          return
       }
     }
   }

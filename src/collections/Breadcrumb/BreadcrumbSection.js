@@ -4,11 +4,11 @@ import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 
 import {
+  childrenUtils,
   createShorthandFactory,
   customPropTypes,
   getUnhandledProps,
   getElementType,
-  META,
   useKeyOnly,
 } from '../../lib'
 
@@ -33,16 +33,10 @@ export default class BreadcrumbSection extends Component {
     content: customPropTypes.contentShorthand,
 
     /** Render as an `a` tag instead of a `div` and adds the href attribute. */
-    href: customPropTypes.every([
-      customPropTypes.disallow(['link']),
-      PropTypes.string,
-    ]),
+    href: customPropTypes.every([customPropTypes.disallow(['link']), PropTypes.string]),
 
     /** Render as an `a` tag instead of a `div`. */
-    link: customPropTypes.every([
-      customPropTypes.disallow(['href']),
-      PropTypes.bool,
-    ]),
+    link: customPropTypes.every([customPropTypes.disallow(['href']), PropTypes.bool]),
 
     /**
      * Called on click. When passed, the component will render as an `a`
@@ -54,45 +48,30 @@ export default class BreadcrumbSection extends Component {
     onClick: PropTypes.func,
   }
 
-  static _meta = {
-    name: 'BreadcrumbSection',
-    type: META.TYPES.COLLECTION,
-    parent: 'Breadcrumb',
+  computeElementType = () => {
+    const { link, onClick } = this.props
+
+    if (link || onClick) return 'a'
   }
 
-  handleClick = (e) => {
-    const { onClick } = this.props
-
-    if (onClick) onClick(e, this.props)
-  }
+  handleClick = e => _.invoke(this.props, 'onClick', e, this.props)
 
   render() {
-    const {
-      active,
-      children,
-      className,
-      content,
-      href,
-      link,
-      onClick,
-    } = this.props
+    const { active, children, className, content, href } = this.props
 
-    const classes = cx(
-      useKeyOnly(active, 'active'),
-      'section',
-      className,
-    )
+    const classes = cx(useKeyOnly(active, 'active'), 'section', className)
     const rest = getUnhandledProps(BreadcrumbSection, this.props)
-    const ElementType = getElementType(BreadcrumbSection, this.props, () => {
-      if (link || onClick) return 'a'
-    })
+    const ElementType = getElementType(BreadcrumbSection, this.props, this.computeElementType)
 
     return (
       <ElementType {...rest} className={classes} href={href} onClick={this.handleClick}>
-        {_.isNil(children) ? content : children}
+        {childrenUtils.isNil(children) ? content : children}
       </ElementType>
     )
   }
 }
 
-BreadcrumbSection.create = createShorthandFactory(BreadcrumbSection, content => ({ content, link: true }))
+BreadcrumbSection.create = createShorthandFactory(BreadcrumbSection, content => ({
+  content,
+  link: true,
+}))

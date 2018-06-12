@@ -1,14 +1,8 @@
 import cx from 'classnames'
-import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
 
-import {
-  customPropTypes,
-  getElementType,
-  getUnhandledProps,
-  META,
-} from '../../lib'
+import { childrenUtils, customPropTypes, getElementType, getUnhandledProps } from '../../lib'
 
 /**
  * A menu item may include a header or may itself be a header.
@@ -21,15 +15,9 @@ function MenuHeader(props) {
 
   return (
     <ElementType {...rest} className={classes}>
-      {_.isNil(children) ? content : children}
+      {childrenUtils.isNil(children) ? content : children}
     </ElementType>
   )
-}
-
-MenuHeader._meta = {
-  name: 'MenuHeader',
-  type: META.TYPES.COLLECTION,
-  parent: 'Menu',
 }
 
 MenuHeader.propTypes = {

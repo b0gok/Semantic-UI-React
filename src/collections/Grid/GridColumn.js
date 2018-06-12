@@ -4,12 +4,12 @@ import React from 'react'
 
 import {
   customPropTypes,
+  createShorthandFactory,
   getElementType,
   getUnhandledProps,
-  META,
   SUI,
   useKeyOnly,
-  useOnlyProp,
+  useMultipleProp,
   useTextAlignProp,
   useValueAndKey,
   useVerticalAlignProp,
@@ -40,7 +40,7 @@ function GridColumn(props) {
   const classes = cx(
     color,
     useKeyOnly(stretched, 'stretched'),
-    useOnlyProp(only, 'only'),
+    useMultipleProp(only, 'only'),
     useTextAlignProp(textAlign),
     useValueAndKey(floated, 'floated'),
     useVerticalAlignProp(verticalAlign),
@@ -56,13 +56,11 @@ function GridColumn(props) {
   const rest = getUnhandledProps(GridColumn, props)
   const ElementType = getElementType(GridColumn, props)
 
-  return <ElementType {...rest} className={classes}>{children}</ElementType>
-}
-
-GridColumn._meta = {
-  name: 'GridColumn',
-  parent: 'Grid',
-  type: META.TYPES.COLLECTION,
+  return (
+    <ElementType {...rest} className={classes}>
+      {children}
+    </ElementType>
+  )
 }
 
 GridColumn.propTypes = {
@@ -90,8 +88,8 @@ GridColumn.propTypes = {
   /** A column can specify a width for a mobile device. */
   mobile: PropTypes.oneOf(SUI.WIDTHS),
 
-  /** A row can appear only for a specific device, or screen sizes. */
-  only: customPropTypes.onlyProp(SUI.VISIBILITY),
+  /** A column can appear only for a specific device, or screen sizes. */
+  only: customPropTypes.multipleProp(SUI.VISIBILITY),
 
   /** A column can stretch its contents to take up the entire grid or row height. */
   stretched: PropTypes.bool,
@@ -111,5 +109,7 @@ GridColumn.propTypes = {
   /** Represents width of column. */
   width: PropTypes.oneOf(SUI.WIDTHS),
 }
+
+GridColumn.create = createShorthandFactory(GridColumn, children => ({ children }))
 
 export default GridColumn

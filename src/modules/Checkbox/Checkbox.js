@@ -1,5 +1,5 @@
 import cx from 'classnames'
-import _ from 'lodash/fp'
+import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
 
@@ -9,10 +9,12 @@ import {
   customPropTypes,
   getElementType,
   getUnhandledProps,
+  htmlInputAttrs,
   makeDebugger,
-  META,
+  partitionHTMLProps,
   useKeyOnly,
 } from '../../lib'
+
 const debug = makeDebugger('checkbox')
 
 /**
@@ -42,6 +44,9 @@ export default class Checkbox extends Component {
 
     /** Removes padding for a label. Auto applied when there is no label. */
     fitted: PropTypes.bool,
+
+    /** A unique identifier. */
+    id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 
     /** Whether or not checkbox is indeterminate. */
     indeterminate: PropTypes.bool,
@@ -77,57 +82,32 @@ export default class Checkbox extends Component {
     onMouseDown: PropTypes.func,
 
     /** Format as a radio element. This means it is an exclusive option. */
-    radio: customPropTypes.every([
-      PropTypes.bool,
-      customPropTypes.disallow(['slider', 'toggle']),
-    ]),
+    radio: customPropTypes.every([PropTypes.bool, customPropTypes.disallow(['slider', 'toggle'])]),
 
     /** A checkbox can be read-only and unable to change states. */
     readOnly: PropTypes.bool,
 
     /** Format to emphasize the current selection state. */
-    slider: customPropTypes.every([
-      PropTypes.bool,
-      customPropTypes.disallow(['radio', 'toggle']),
-    ]),
+    slider: customPropTypes.every([PropTypes.bool, customPropTypes.disallow(['radio', 'toggle'])]),
 
     /** A checkbox can receive focus. */
-    tabIndex: PropTypes.oneOfType([
-      PropTypes.number,
-      PropTypes.string,
-    ]),
+    tabIndex: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 
     /** Format to show an on or off choice. */
-    toggle: customPropTypes.every([
-      PropTypes.bool,
-      customPropTypes.disallow(['radio', 'slider']),
-    ]),
+    toggle: customPropTypes.every([PropTypes.bool, customPropTypes.disallow(['radio', 'slider'])]),
 
     /** HTML input type, either checkbox or radio. */
     type: PropTypes.oneOf(['checkbox', 'radio']),
 
     /** The HTML input value. */
-    value: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.number,
-    ]),
+    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   }
 
   static defaultProps = {
     type: 'checkbox',
   }
 
-  static autoControlledProps = [
-    'checked',
-    'indeterminate',
-  ]
-
-  static _meta = {
-    name: 'Checkbox',
-    type: META.TYPES.MODULE,
-  }
-
-  state = {}
+  static autoControlledProps = ['checked', 'indeterminate']
 
   componentDidMount() {
     this.setIndeterminate()
@@ -151,30 +131,48 @@ export default class Checkbox extends Component {
     return disabled ? -1 : 0
   }
 
-  handleInputRef = c => (this.inputRef = c)
+  handleContainerClick = (e) => {
+    const { id } = this.props
 
-  handleClick = e => {
-    debug('handleClick()')
-
-    const { onChange, onClick } = this.props
-    const { checked, indeterminate } = this.state
-
-    if (this.canToggle()) {
-      if (onClick) onClick(e, { ...this.props, checked: !!checked, indeterminate: !!indeterminate })
-      if (onChange) onChange(e, { ...this.props, checked: !checked, indeterminate: false })
-
-      this.trySetState({ checked: !checked, indeterminate: false })
-    }
+    if (_.isNil(id)) this.handleClick(e)
   }
 
-  handleMouseDown = e => {
-    debug('handleMouseDown()')
+  handleInputClick = (e) => {
+    const { id } = this.props
 
-    const { onMouseDown } = this.props
+    if (id) this.handleClick(e)
+  }
+
+  handleInputRef = c => (this.inputRef = c)
+
+  handleClick = (e) => {
+    debug('handleClick()')
     const { checked, indeterminate } = this.state
 
-    _.invoke('focus', this.inputRef)
-    if (onMouseDown) onMouseDown(e, { ...this.props, checked: !!checked, indeterminate: !!indeterminate })
+    if (!this.canToggle()) return
+
+    _.invoke(this.props, 'onClick', e, {
+      ...this.props,
+      checked: !checked,
+      indeterminate: !!indeterminate,
+    })
+    _.invoke(this.props, 'onChange', e, { ...this.props, checked: !checked, indeterminate: false })
+
+    this.trySetState({ checked: !checked, indeterminate: false })
+  }
+
+  handleMouseDown = (e) => {
+    debug('handleMouseDown()')
+    const { checked, indeterminate } = this.state
+
+    _.invoke(this.props, 'onMouseDown', e, {
+      ...this.props,
+      checked: !!checked,
+      indeterminate: !!indeterminate,
+    })
+    _.invoke(this.inputRef, 'focus')
+
+    e.preventDefault()
   }
 
   // Note: You can't directly set the indeterminate prop on the input, so we
@@ -191,6 +189,7 @@ export default class Checkbox extends Component {
       className,
       disabled,
       label,
+      id,
       name,
       radio,
       readOnly,
@@ -208,29 +207,34 @@ export default class Checkbox extends Component {
       useKeyOnly(indeterminate, 'indeterminate'),
       // auto apply fitted class to compact white space when there is no label
       // https://semantic-ui.com/modules/checkbox.html#fitted
-      useKeyOnly(!label, 'fitted'),
+      useKeyOnly(_.isNil(label), 'fitted'),
       useKeyOnly(radio, 'radio'),
       useKeyOnly(readOnly, 'read-only'),
       useKeyOnly(slider, 'slider'),
       useKeyOnly(toggle, 'toggle'),
       'checkbox',
-      className
+      className,
     )
-    const rest = getUnhandledProps(Checkbox, this.props)
+    const unhandled = getUnhandledProps(Checkbox, this.props)
     const ElementType = getElementType(Checkbox, this.props)
+    const [htmlInputProps, rest] = partitionHTMLProps(unhandled, { htmlProps: htmlInputAttrs })
 
     return (
       <ElementType
         {...rest}
         className={classes}
-        onChange={this.handleClick}
-        onClick={this.handleClick}
+        onClick={this.handleContainerClick}
+        onChange={this.handleContainerClick}
         onMouseDown={this.handleMouseDown}
       >
         <input
+          {...htmlInputProps}
           checked={checked}
           className='hidden'
+          disabled={disabled}
+          id={id}
           name={name}
+          onClick={this.handleInputClick}
           readOnly
           ref={this.handleInputRef}
           tabIndex={this.computeTabIndex()}
@@ -241,7 +245,9 @@ export default class Checkbox extends Component {
          Heads Up!
          Do not remove empty labels, they are required by SUI CSS
          */}
-        {createHTMLLabel(label) || <label />}
+        {createHTMLLabel(label, { defaultProps: { htmlFor: id }, autoGenerateKey: false }) || (
+          <label htmlFor={id} />
+        )}
       </ElementType>
     )
   }

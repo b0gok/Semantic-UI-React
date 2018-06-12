@@ -4,11 +4,11 @@ import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 
 import {
+  childrenUtils,
   createShorthandFactory,
   customPropTypes,
   getElementType,
   getUnhandledProps,
-  META,
   SUI,
   useKeyOnly,
   useKeyOrValueAndKey,
@@ -42,19 +42,13 @@ export default class MenuItem extends Component {
     disabled: PropTypes.bool,
 
     /** A menu item or menu can remove element padding, vertically or horizontally. */
-    fitted: PropTypes.oneOfType([
-      PropTypes.bool,
-      PropTypes.oneOf(['horizontally', 'vertically']),
-    ]),
+    fitted: PropTypes.oneOfType([PropTypes.bool, PropTypes.oneOf(['horizontally', 'vertically'])]),
 
     /** A menu item may include a header or may itself be a header. */
     header: PropTypes.bool,
 
     /** MenuItem can be only icon. */
-    icon: PropTypes.oneOfType([
-      PropTypes.bool,
-      customPropTypes.itemShorthand,
-    ]),
+    icon: PropTypes.oneOfType([PropTypes.bool, customPropTypes.itemShorthand]),
 
     /** MenuItem index inside Menu. */
     index: PropTypes.number,
@@ -74,20 +68,14 @@ export default class MenuItem extends Component {
      */
     onClick: PropTypes.func,
 
-    /** A menu item can take right position. */
-    position: PropTypes.oneOf(['right']),
-  }
-
-  static _meta = {
-    name: 'MenuItem',
-    type: META.TYPES.COLLECTION,
-    parent: 'Menu',
+    /** A menu item can take left or right position. */
+    position: PropTypes.oneOf(['left', 'right']),
   }
 
   handleClick = (e) => {
-    const { onClick } = this.props
+    const { disabled } = this.props
 
-    if (onClick) onClick(e, this.props)
+    if (!disabled) _.invoke(this.props, 'onClick', e, this.props)
   }
 
   render() {
@@ -112,7 +100,7 @@ export default class MenuItem extends Component {
       position,
       useKeyOnly(active, 'active'),
       useKeyOnly(disabled, 'disabled'),
-      useKeyOnly(icon === true || icon && !(name || content), 'icon'),
+      useKeyOnly(icon === true || (icon && !(name || content)), 'icon'),
       useKeyOnly(header, 'header'),
       useKeyOnly(link, 'link'),
       useKeyOrValueAndKey(fitted, 'fitted'),
@@ -124,14 +112,18 @@ export default class MenuItem extends Component {
     })
     const rest = getUnhandledProps(MenuItem, this.props)
 
-    if (!_.isNil(children)) {
-      return <ElementType {...rest} className={classes} onClick={this.handleClick}>{children}</ElementType>
+    if (!childrenUtils.isNil(children)) {
+      return (
+        <ElementType {...rest} className={classes} onClick={this.handleClick}>
+          {children}
+        </ElementType>
+      )
     }
 
     return (
       <ElementType {...rest} className={classes} onClick={this.handleClick}>
-        {Icon.create(icon)}
-        {content || _.startCase(name)}
+        {Icon.create(icon, { autoGenerateKey: false })}
+        {childrenUtils.isNil(content) ? _.startCase(name) : content}
       </ElementType>
     )
   }

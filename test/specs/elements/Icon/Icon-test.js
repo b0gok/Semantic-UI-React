@@ -8,7 +8,7 @@ import * as common from 'test/specs/commonTests'
 
 describe('Icon', () => {
   common.isConformant(Icon)
-  common.hasSubComponents(Icon, [IconGroup])
+  common.hasSubcomponents(Icon, [IconGroup])
 
   common.implementsCreateMethod(Icon)
 
@@ -28,11 +28,8 @@ describe('Icon', () => {
   common.propValueOnlyToClassName(Icon, 'name', ['money'])
   common.propValueOnlyToClassName(Icon, 'size', _.without(SUI.SIZES, 'medium'))
 
-  common.rendersChildren(Icon)
-
   it('renders as an <i> by default', () => {
-    shallow(<Icon />)
-      .should.have.tagName('i')
+    shallow(<Icon />).should.have.tagName('i')
   })
 
   describe('aria', () => {
@@ -40,6 +37,12 @@ describe('Icon', () => {
       const wrapper = shallow(<Icon />)
 
       wrapper.should.have.prop('aria-hidden', 'true')
+    })
+
+    it('should omit aria-hidden when aria-label is set', () => {
+      const wrapper = shallow(<Icon aria-label='icon' />)
+
+      wrapper.should.not.have.prop('aria-hidden')
     })
   })
 })

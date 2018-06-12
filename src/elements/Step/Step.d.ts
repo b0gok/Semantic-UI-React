@@ -1,9 +1,11 @@
 import * as React from 'react';
 
-import { default as StepContent } from './StepContent';
-import { default as StepDescription } from './StepDescription';
-import { default as StepGroup } from './StepGroup';
-import { default as StepTitle } from './StepTitle';
+import { SemanticShorthandContent, SemanticShorthandItem } from '../..';
+import { IconProps } from '../Icon';
+import StepContent from './StepContent';
+import { default as StepDescription, StepDescriptionProps } from './StepDescription';
+import StepGroup from './StepGroup';
+import { default as StepTitle, StepTitleProps } from './StepTitle';
 
 export interface StepProps {
   [key: string]: any;
@@ -23,8 +25,11 @@ export interface StepProps {
   /** A step can show that a user has completed it. */
   completed?: boolean;
 
+  /** Shorthand for primary content. */
+  content?: SemanticShorthandContent;
+
   /** Shorthand for StepDescription. */
-  description?: any;
+  description?: SemanticShorthandItem<StepDescriptionProps>;
 
   /** Show that the Loader is inactive. */
   disabled?: boolean;
@@ -33,7 +38,7 @@ export interface StepProps {
   href?: string;
 
   /** Shorthand for Icon. */
-  icon?: any;
+  icon?: SemanticShorthandItem<IconProps>;
 
   /** A step can be link. */
   link?: boolean;
@@ -51,7 +56,7 @@ export interface StepProps {
   ordered?: boolean;
 
   /** Shorthand for StepTitle. */
-  title?: any;
+  title?: SemanticShorthandItem<StepTitleProps>;
 }
 
 interface StepComponent extends React.ComponentClass<StepProps> {

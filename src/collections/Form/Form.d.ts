@@ -1,20 +1,23 @@
 import * as React from 'react';
 
-import { default as FormField } from './FormField';
-import { default as FormButton } from './FormButton';
-import { default as FormCheckbox } from './FormCheckbox';
-import { default as FormDropdown } from './FormDropdown';
-import { default as FormGroup } from './FormGroup';
-import { default as FormInput } from './FormInput';
-import { default as FormRadio } from './FormRadio';
-import { default as FormSelect } from './FormSelect';
-import { default as FormTextArea } from './FormTextArea';
+import FormField from './FormField';
+import FormButton from './FormButton';
+import FormCheckbox from './FormCheckbox';
+import FormDropdown from './FormDropdown';
+import FormGroup from './FormGroup';
+import FormInput from './FormInput';
+import FormRadio from './FormRadio';
+import FormSelect from './FormSelect';
+import FormTextArea from './FormTextArea';
 
 export interface FormProps {
   [key: string]: any;
 
   /** An element type to render as (string or function). */
   as?: any;
+
+  /** The HTML form action */
+  action?: string;
 
   /** Primary content. */
   children?: React.ReactNode;
@@ -31,6 +34,9 @@ export interface FormProps {
   /** Automatically show a loading indicator. */
   loading?: boolean;
 
+  /** The HTML form submit handler. */
+  onSubmit?: (event: React.FormEvent<HTMLFormElement>, data: FormProps) => void;
+
   /** A comment can contain a form to reply to a comment. This may have arbitrary content. */
   reply?: boolean;
 
@@ -40,6 +46,9 @@ export interface FormProps {
   /** Automatically show any success Message children. */
   success?: boolean;
 
+  /** A form can prevent itself from stacking on mobile. */
+  unstackable?: boolean;
+
   /** Automatically show any warning Message children. */
   warning?: boolean;
 
@@ -47,7 +56,7 @@ export interface FormProps {
   widths?: 'equal';
 }
 
-interface FormComponent extends React.StatelessComponent<FormProps> {
+export interface FormComponent extends React.StatelessComponent<FormProps> {
   Field: typeof FormField;
   Button: typeof FormButton;
   Checkbox: typeof FormCheckbox;

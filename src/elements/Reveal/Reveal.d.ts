@@ -1,5 +1,7 @@
 import * as React from 'react';
-import { default as RevealContent } from './RevealContent';
+
+import { SemanticShorthandContent } from '../..';
+import RevealContent from './RevealContent';
 
 export interface RevealProps {
   [key: string]: any;
@@ -11,15 +13,24 @@ export interface RevealProps {
   active?: boolean;
 
   /** An animation name that will be applied to Reveal. */
-  animated?: 'fade' | 'small fade'
-    | 'move' | 'move right' | 'move up' | 'move down'
-    | 'rotate' | 'rotate left';
+  animated?:
+    | 'fade'
+    | 'small fade'
+    | 'move'
+    | 'move right'
+    | 'move up'
+    | 'move down'
+    | 'rotate'
+    | 'rotate left';
 
   /** Primary content. */
   children?: React.ReactNode;
 
   /** Additional classes. */
   className?: string;
+
+  /** Shorthand for primary content. */
+  content?: SemanticShorthandContent;
 
   /** A disabled reveal will not animate when hovered. */
   disabled?: boolean;

@@ -1,13 +1,12 @@
 import cx from 'classnames'
-import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
 
 import {
+  childrenUtils,
   customPropTypes,
   getElementType,
   getUnhandledProps,
-  META,
   SUI,
   useKeyOnly,
   useKeyOrValueAndKey,
@@ -47,14 +46,9 @@ function Loader(props) {
 
   return (
     <ElementType {...rest} className={classes}>
-      {_.isNil(children) ? content : children}
+      {childrenUtils.isNil(children) ? content : children}
     </ElementType>
   )
-}
-
-Loader._meta = {
-  name: 'Loader',
-  type: META.TYPES.ELEMENT,
 }
 
 Loader.propTypes = {
@@ -80,10 +74,7 @@ Loader.propTypes = {
   indeterminate: PropTypes.bool,
 
   /** Loaders can appear inline with content. */
-  inline: PropTypes.oneOfType([
-    PropTypes.bool,
-    PropTypes.oneOf(['centered']),
-  ]),
+  inline: PropTypes.oneOfType([PropTypes.bool, PropTypes.oneOf(['centered'])]),
 
   /** Loaders can have their colors inverted. */
   inverted: PropTypes.bool,

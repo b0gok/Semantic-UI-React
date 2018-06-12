@@ -1,32 +1,26 @@
 import cx from 'classnames'
-import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
 
 import {
+  childrenUtils,
+  createShorthandFactory,
   customPropTypes,
   getElementType,
   getUnhandledProps,
-  META,
 } from '../../lib'
 
 function StepDescription(props) {
-  const { children, className, description } = props
+  const { children, className, content } = props
   const classes = cx('description', className)
   const rest = getUnhandledProps(StepDescription, props)
   const ElementType = getElementType(StepDescription, props)
 
   return (
     <ElementType {...rest} className={classes}>
-      {_.isNil(children) ? description : children}
+      {childrenUtils.isNil(children) ? content : children}
     </ElementType>
   )
-}
-
-StepDescription._meta = {
-  name: 'StepDescription',
-  parent: 'Step',
-  type: META.TYPES.ELEMENT,
 }
 
 StepDescription.propTypes = {
@@ -40,7 +34,9 @@ StepDescription.propTypes = {
   className: PropTypes.string,
 
   /** Shorthand for primary content. */
-  description: customPropTypes.contentShorthand,
+  content: customPropTypes.contentShorthand,
 }
+
+StepDescription.create = createShorthandFactory(StepDescription, content => ({ content }))
 
 export default StepDescription

@@ -1,14 +1,13 @@
-import _ from 'lodash'
 import cx from 'classnames'
 import PropTypes from 'prop-types'
 import React from 'react'
 
 import {
+  childrenUtils,
   createShorthandFactory,
   customPropTypes,
   getElementType,
   getUnhandledProps,
-  META,
 } from '../../lib'
 
 /**
@@ -22,15 +21,9 @@ function HeaderSubheader(props) {
 
   return (
     <ElementType {...rest} className={classes}>
-      {_.isNil(children) ? content : children}
+      {childrenUtils.isNil(children) ? content : children}
     </ElementType>
   )
-}
-
-HeaderSubheader._meta = {
-  name: 'HeaderSubheader',
-  parent: 'Header',
-  type: META.TYPES.ELEMENT,
 }
 
 HeaderSubheader.propTypes = {
