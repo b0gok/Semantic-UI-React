@@ -16,27 +16,30 @@ describe('DropdownItem', () => {
   common.propKeyOnlyToClassName(DropdownItem, 'active')
 
   common.implementsCreateMethod(DropdownItem)
-  common.implementsIconProp(DropdownItem)
-  common.implementsLabelProp(DropdownItem)
-  common.implementsImageProp(DropdownItem)
+  common.implementsIconProp(DropdownItem, { autoGenerateKey: false })
+  common.implementsLabelProp(DropdownItem, { autoGenerateKey: false })
+  common.implementsImageProp(DropdownItem, { autoGenerateKey: false })
 
   common.implementsShorthandProp(DropdownItem, {
+    autoGenerateKey: false,
     propKey: 'flag',
     ShorthandComponent: Flag,
-    mapValueToProps: name => ({ name }),
+    mapValueToProps: (name) => ({ name }),
   })
 
   common.implementsShorthandProp(DropdownItem, {
+    autoGenerateKey: false,
     propKey: 'description',
     ShorthandComponent: 'span',
-    mapValueToProps: children => ({ children }),
+    mapValueToProps: (children) => ({ children }),
     shorthandDefaultProps: { className: 'description' },
   })
 
   common.implementsShorthandProp(DropdownItem, {
+    autoGenerateKey: false,
     propKey: 'text',
     ShorthandComponent: 'span',
-    mapValueToProps: children => ({ children }),
+    mapValueToProps: (children) => ({ children }),
     shorthandDefaultProps: { className: 'text' },
   })
 
@@ -81,15 +84,15 @@ describe('DropdownItem', () => {
 
   describe('description', () => {
     it('adds className="description" to element shorthand', () => {
-      shallow(<DropdownItem description={<strong />} />)
-        .should.have.descendants('strong.description')
+      shallow(<DropdownItem description={<strong />} />).should.have.descendants(
+        'strong.description',
+      )
     })
   })
 
   describe('text', () => {
     it('adds className="text" to element shorthand', () => {
-      shallow(<DropdownItem text={<strong />} />)
-        .should.have.descendants('strong.text')
+      shallow(<DropdownItem text={<strong />} />).should.have.descendants('strong.text')
     })
   })
 
@@ -109,23 +112,17 @@ describe('DropdownItem', () => {
   })
 
   describe('onClick', () => {
-    it('omitted when not defined', () => {
-      const click = () => shallow(<DropdownItem />).simulate('click')
-      expect(click).to.not.throw()
-    })
-
     it('is called with (e, props) when clicked', () => {
-      const spy = sandbox.spy()
+      const onClick = sandbox.spy()
 
       const value = faker.hacker.phrase()
       const event = { target: null }
       const props = { value, 'data-foo': 'bar' }
 
-      shallow(<DropdownItem onClick={spy} {...props} />)
-        .simulate('click', event)
+      shallow(<DropdownItem onClick={onClick} {...props} />).simulate('click', event)
 
-      spy.should.have.been.calledOnce()
-      spy.should.have.been.calledWithMatch(event, props)
+      onClick.should.have.been.calledOnce()
+      onClick.should.have.been.calledWithMatch(event, props)
     })
   })
 })

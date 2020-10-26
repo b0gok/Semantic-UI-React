@@ -5,8 +5,8 @@ export default class TransitionExampleDuration extends Component {
   state = { hide: 500, show: 500, visible: true }
 
   handleChange = (e, { name, value }) => this.setState({ [name]: value })
-
-  toggleVisibility = () => this.setState({ visible: !this.state.visible })
+  toggleVisibility = () =>
+    this.setState((prevState) => ({ visible: !prevState.visible }))
 
   render() {
     const { hide, show, visible } = this.state
@@ -39,7 +39,7 @@ export default class TransitionExampleDuration extends Component {
 
         <Grid.Column>
           <Transition duration={{ hide, show }} visible={visible}>
-            <Image centered size='small' src='/assets/images/leaves/3.png' />
+            <Image centered size='small' src='/images/leaves/3.png' />
           </Transition>
         </Grid.Column>
       </Grid>

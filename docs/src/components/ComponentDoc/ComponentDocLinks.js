@@ -15,13 +15,6 @@ const linkListStyle = {
 }
 
 export default class ComponentDocLinks extends PureComponent {
-  static propTypes = {
-    displayName: PropTypes.string.isRequired,
-    parentDisplayName: PropTypes.string,
-    repoPath: PropTypes.string.isRequired,
-    type: PropTypes.string.isRequired,
-  }
-
   render() {
     const { displayName, parentDisplayName, repoPath, type } = this.props
     const ghLink = `${repoURL}/blob/master/${repoPath}`
@@ -33,7 +26,7 @@ export default class ComponentDocLinks extends PureComponent {
         <List.Item
           content={
             <code>
-              <a href={ghLink} target='_blank'>
+              <a href={ghLink} target='_blank' rel='noopener noreferrer'>
                 {repoPath}
               </a>
             </code>
@@ -43,7 +36,7 @@ export default class ComponentDocLinks extends PureComponent {
         {suiLink && (
           <List.Item
             content={
-              <a href={suiLink} target='_blank'>
+              <a href={suiLink} target='_blank' rel='noopener noreferrer'>
                 Semantic UI {displayName} Docs
               </a>
             }
@@ -53,4 +46,11 @@ export default class ComponentDocLinks extends PureComponent {
       </List>
     )
   }
+}
+
+ComponentDocLinks.propTypes = {
+  displayName: PropTypes.string.isRequired,
+  parentDisplayName: PropTypes.string,
+  repoPath: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired,
 }

@@ -15,12 +15,13 @@ describe('Label', () => {
   common.rendersChildren(Label)
 
   common.implementsCreateMethod(Label)
-  common.implementsIconProp(Label)
-  common.implementsImageProp(Label)
+  common.implementsIconProp(Label, { autoGenerateKey: false })
+  common.implementsImageProp(Label, { autoGenerateKey: false })
   common.implementsShorthandProp(Label, {
+    autoGenerateKey: false,
     propKey: 'detail',
     ShorthandComponent: LabelDetail,
-    mapValueToProps: val => ({ content: val }),
+    mapValueToProps: (val) => ({ content: val }),
   })
 
   common.propKeyAndValueToClassName(Label, 'attached', [
@@ -38,6 +39,7 @@ describe('Label', () => {
   common.propKeyOnlyToClassName(Label, 'empty')
   common.propKeyOnlyToClassName(Label, 'floating')
   common.propKeyOnlyToClassName(Label, 'horizontal')
+  common.propKeyOnlyToClassName(Label, 'prompt')
   common.propKeyOnlyToClassName(Label, 'tag')
 
   common.propKeyOrValueAndKeyToClassName(Label, 'corner', ['left', 'right'])
@@ -126,7 +128,7 @@ describe('Label', () => {
       const options = ['above', 'below', 'left', 'right']
       const wrapper = shallow(<Label pointing />)
 
-      options.map(className => wrapper.should.not.have.className(className))
+      options.map((className) => wrapper.should.not.have.className(className))
     })
 
     it('adds `above` as suffix', () => {

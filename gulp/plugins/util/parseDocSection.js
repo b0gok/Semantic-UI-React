@@ -1,10 +1,10 @@
 import _ from 'lodash'
-import traverse from 'babel-traverse'
+import traverse from '@babel/traverse'
 
 import parseBuffer from './parseBuffer'
 
-const getJSXAttributes = jsxPath =>
-  _.map(_.get(jsxPath, 'node.attributes'), attr => ({
+const getJSXAttributes = (jsxPath) =>
+  _.map(_.get(jsxPath, 'node.attributes'), (attr) => ({
     name: _.get(attr, 'name.name'),
     value: _.get(attr, 'value.value'),
   }))

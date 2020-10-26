@@ -2,9 +2,9 @@ import copyToClipboard from 'copy-to-clipboard'
 import _ from 'lodash/fp'
 import leven from 'leven'
 import React, { Component } from 'react'
+import { Form, Grid, Header, Icon, Message, Popup } from 'semantic-ui-react'
 
-import { SUI } from 'src/lib'
-import { Form, Grid, Header, Icon, Message, Popup } from 'src'
+import * as SUI from 'src/lib/SUI'
 
 const gridStyle = {
   background: '#fff',
@@ -86,7 +86,7 @@ const similarityScore = (strA, strB) => {
   const bWords = strB.trim().split(' ')
 
   return _.flow(
-    _.map(a => _.map(b => leven(a, b), bWords)),
+    _.map((a) => _.map((b) => leven(a, b), bWords)),
     _.map(_.min),
     _.sum,
   )(aWords)
@@ -103,7 +103,7 @@ export default class IconSearch extends Component {
 
   handleIncludeSimilarChange = (e, { checked }) => this.setState({ includeSimilar: checked })
 
-  copy = text => () => {
+  copy = (text) => () => {
     copyToClipboard(text)
     this.setState({ copied: true })
     setTimeout(() => this.setState({ copied: false }), 1000)
@@ -115,7 +115,6 @@ export default class IconSearch extends Component {
       mouseEnterDelay={1000}
       inverted
       closeOnTriggerClick={false}
-      closeOnRootNodeClick={false}
       closeOnDocumentClick={false}
       style={{ width: '8em', textAlign: 'center' }}
       size='mini'
@@ -137,7 +136,7 @@ export default class IconSearch extends Component {
 
     // no search
     if (!query) {
-      return iconKeys.map(iconKey => (
+      return iconKeys.map((iconKey) => (
         <Grid key={iconKey} columns={5} doubling>
           <Grid.Column width={16}>
             <Header
@@ -148,7 +147,7 @@ export default class IconSearch extends Component {
               textAlign='left'
             />
           </Grid.Column>
-          {SUI[iconKey].map(name => this.renderIconColumn(name, iconKey))}
+          {SUI[iconKey].map((name) => this.renderIconColumn(name, iconKey))}
         </Grid>
       ))
     }
@@ -159,7 +158,7 @@ export default class IconSearch extends Component {
 
       // similar
       return includeSimilar && similarityScore(name, query) <= 2
-    }).map(name => this.renderIconColumn(name))
+    }).map((name) => this.renderIconColumn(name))
 
     // no results
     if (iconSearchMatches.length === 0) {
@@ -192,9 +191,6 @@ export default class IconSearch extends Component {
     return (
       <Grid columns={1} padded style={gridStyle}>
         <Grid.Column>
-          <Header as='h2'>Icon Set</Header>
-          <p>An icon set contains an arbitrary number of glyphs.</p>
-
           <Form>
             <Form.Group inline>
               <Form.Input

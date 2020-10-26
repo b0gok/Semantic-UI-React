@@ -16,14 +16,16 @@ describe('Statistic', () => {
   common.rendersChildren(Statistic)
 
   common.implementsShorthandProp(Statistic, {
+    autoGenerateKey: false,
     propKey: 'label',
     ShorthandComponent: StatisticLabel,
-    mapValueToProps: content => ({ content }),
+    mapValueToProps: (content) => ({ content }),
   })
   common.implementsShorthandProp(Statistic, {
+    autoGenerateKey: false,
     propKey: 'value',
     ShorthandComponent: StatisticValue,
-    mapValueToProps: content => ({ content }),
+    mapValueToProps: (content) => ({ content }),
     shorthandDefaultProps: {
       text: undefined,
     },

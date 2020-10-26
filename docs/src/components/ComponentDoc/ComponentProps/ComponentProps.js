@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 import { Checkbox } from 'semantic-ui-react'
 
-import { getComponentGroup } from 'docs/src/utils'
+import { docTypes } from 'docs/src/utils'
 import ComponentTable from '../ComponentTable'
 import ComponentPropsComponents from './ComponentPropsComponents'
 import ComponentPropsDescription from './ComponentPropsDescription'
@@ -11,25 +11,12 @@ import ComponentPropsDescription from './ComponentPropsDescription'
 const propsContainerStyle = { overflowX: 'auto' }
 
 export default class ComponentProps extends Component {
-  static propTypes = {
-    displayName: PropTypes.string.isRequired,
-    props: PropTypes.arrayOf(PropTypes.object).isRequired,
-  }
+  state = {}
 
-  componentWillMount() {
-    const { displayName } = this.props
-
-    this.setState({ componentGroup: getComponentGroup(displayName) })
-  }
-
-  componentWillReceiveProps({ displayName: next }) {
-    const current = this.props.displayName
-
-    if (current !== next) {
-      this.setState({
-        activeDisplayName: null,
-        componentGroup: getComponentGroup(next),
-      })
+  static getDerivedStateFromProps(props, state) {
+    return {
+      displayName: props.displayName,
+      activeDisplayName: props.displayName === state.displayName ? state.activeDisplayName : null,
     }
   }
 
@@ -45,15 +32,16 @@ export default class ComponentProps extends Component {
   }
 
   render() {
-    const { displayName } = this.props
-    const { activeDisplayName, componentGroup } = this.state
-    const displayNames = _.keys(componentGroup)
-    const { docblock, props } = componentGroup[activeDisplayName] || {}
+    const { displayName, componentsInfo } = this.props
+    const { activeDisplayName } = this.state
+
+    const displayNames = _.keys(componentsInfo)
+    const { docblock, props } = componentsInfo[activeDisplayName] || {}
     const description = _.get(docblock, 'description', [])
 
     return (
-      <div>
-        <Checkbox slider checked={!!activeDisplayName} label='Props' onClick={this.handleToggle} />
+      <>
+        <Checkbox slider checked={!!activeDisplayName} label='Props' onChange={this.handleToggle} />
         <ComponentPropsComponents
           activeDisplayName={activeDisplayName}
           displayNames={displayNames}
@@ -67,7 +55,12 @@ export default class ComponentProps extends Component {
             <ComponentTable displayName={activeDisplayName} props={props} />
           </div>
         )}
-      </div>
+      </>
     )
   }
+}
+
+ComponentProps.propTypes = {
+  componentsInfo: PropTypes.objectOf(docTypes.componentInfoShape).isRequired,
+  displayName: PropTypes.string.isRequired,
 }

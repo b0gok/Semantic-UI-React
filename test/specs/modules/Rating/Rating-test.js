@@ -19,10 +19,7 @@ describe('Rating', () => {
     it('makes icons active up to and including the clicked icon', () => {
       const wrapper = mount(<Rating maxRating={3} />)
 
-      wrapper
-        .find('RatingIcon')
-        .at(1)
-        .simulate('click')
+      wrapper.find('RatingIcon').at(1).simulate('click')
 
       const icons = wrapper.find('RatingIcon')
 
@@ -32,8 +29,7 @@ describe('Rating', () => {
     })
 
     it('if no rating selected no icon should have aria-checked', () => {
-      const icons = mount(<Rating maxRating={3} />)
-        .find('RatingIcon')
+      const icons = mount(<Rating maxRating={3} />).find('RatingIcon')
 
       icons.at(0).should.have.prop('aria-checked', false)
       icons.at(1).should.have.prop('aria-checked', false)
@@ -43,10 +39,7 @@ describe('Rating', () => {
     it('makes the clicked icon aria-checked', () => {
       const wrapper = mount(<Rating maxRating={3} />)
 
-      wrapper
-        .find('RatingIcon')
-        .at(1)
-        .simulate('click')
+      wrapper.find('RatingIcon').at(1).simulate('click')
 
       const icons = wrapper.find('RatingIcon')
 
@@ -58,10 +51,7 @@ describe('Rating', () => {
     it('set aria-setsize on each rating icon', () => {
       const wrapper = mount(<Rating maxRating={3} />)
 
-      wrapper
-        .find('RatingIcon')
-        .at(1)
-        .simulate('click')
+      wrapper.find('RatingIcon').at(1).simulate('click')
 
       const icons = wrapper.find('RatingIcon')
 
@@ -73,10 +63,7 @@ describe('Rating', () => {
     it('sets aria-posinset on each rating icon', () => {
       const wrapper = mount(<Rating maxRating={3} />)
 
-      wrapper
-        .find('RatingIcon')
-        .at(1)
-        .simulate('click')
+      wrapper.find('RatingIcon').at(1).simulate('click')
 
       const icons = wrapper.find('RatingIcon')
 
@@ -88,13 +75,8 @@ describe('Rating', () => {
     it('removes the "selected" prop', () => {
       const wrapper = mount(<Rating maxRating={3} />)
 
-      wrapper
-        .find('RatingIcon')
-        .last()
-        .simulate('mouseEnter')
-        .simulate('click')
-      wrapper
-        .should.not.have.className('selected')
+      wrapper.find('RatingIcon').last().simulate('mouseEnter').simulate('click')
+      wrapper.should.not.have.className('selected')
       wrapper
         .find('RatingIcon[selected=true]')
         .should.have.length(0, 'Some RatingIcons did not remove their "selected" prop')
@@ -105,21 +87,14 @@ describe('Rating', () => {
     it('adds the "selected" className to the Rating', () => {
       const wrapper = mount(<Rating maxRating={3} />)
 
-      wrapper
-        .find('RatingIcon')
-        .first()
-        .simulate('mouseEnter')
-      wrapper
-        .should.have.className('selected')
+      wrapper.find('RatingIcon').first().simulate('mouseEnter')
+      wrapper.should.have.className('selected')
     })
 
     it('selects icons up to and including the hovered icon', () => {
       const wrapper = mount(<Rating maxRating={3} />)
 
-      wrapper
-        .find('RatingIcon')
-        .at(1)
-        .simulate('mouseEnter')
+      wrapper.find('RatingIcon').at(1).simulate('mouseEnter')
 
       const icons = wrapper.find('RatingIcon')
 
@@ -131,10 +106,7 @@ describe('Rating', () => {
     it('unselects icons on mouse leave', () => {
       const wrapper = mount(<Rating maxRating={3} />)
 
-      wrapper
-        .find('RatingIcon')
-        .last()
-        .simulate('mouseEnter')
+      wrapper.find('RatingIcon').last().simulate('mouseEnter')
       wrapper.simulate('mouseLeave')
 
       wrapper
@@ -147,10 +119,7 @@ describe('Rating', () => {
     it('prevents clearing by default with multiple icons', () => {
       const wrapper = mount(<Rating defaultRating={5} maxRating={5} />)
 
-      wrapper
-        .find('RatingIcon')
-        .last()
-        .simulate('click')
+      wrapper.find('RatingIcon').last().simulate('click')
       wrapper
         .find('RatingIcon[active=true]')
         .should.have.length(5, 'Some RatingIcons did not retain their "active" prop')
@@ -159,45 +128,24 @@ describe('Rating', () => {
     it('allows toggling when set to "auto" with a single icon', () => {
       const wrapper = mount(<Rating clearable='auto' maxRating={1} />)
 
-      wrapper
-        .find('RatingIcon')
-        .at(0)
-        .simulate('click')
-      wrapper
-        .find('RatingIcon')
-        .at(0)
-        .should.have.prop('active', true)
+      wrapper.find('RatingIcon').at(0).simulate('click')
+      wrapper.find('RatingIcon').at(0).should.have.prop('active', true)
 
-      wrapper
-        .find('RatingIcon')
-        .at(0)
-        .simulate('click')
-      wrapper
-        .find('RatingIcon')
-        .at(0)
-        .should.have.prop('active', false)
+      wrapper.find('RatingIcon').at(0).simulate('click')
+      wrapper.find('RatingIcon').at(0).should.have.prop('active', false)
     })
 
     it('allows clearing when true with a single icon', () => {
       const wrapper = mount(<Rating clearable defaultRating={1} maxRating={1} />)
 
-      wrapper
-        .find('RatingIcon')
-        .at(0)
-        .simulate('click')
-      wrapper
-        .find('RatingIcon')
-        .at(0)
-        .should.have.prop('active', false)
+      wrapper.find('RatingIcon').at(0).simulate('click')
+      wrapper.find('RatingIcon').at(0).should.have.prop('active', false)
     })
 
     it('allows clearing when true with multiple icons', () => {
       const wrapper = mount(<Rating clearable defaultRating={4} maxRating={5} />)
 
-      wrapper
-        .find('RatingIcon')
-        .at(3)
-        .simulate('click')
+      wrapper.find('RatingIcon').at(3).simulate('click')
       wrapper
         .find('RatingIcon[active=true]')
         .should.have.length(0, 'Some RatingIcons did not remove their "active" prop')
@@ -214,10 +162,7 @@ describe('Rating', () => {
     it('prevents clearing when false with multiple icons', () => {
       const wrapper = mount(<Rating clearable={false} defaultRating={5} maxRating={5} />)
 
-      wrapper
-        .find('RatingIcon')
-        .last()
-        .simulate('click')
+      wrapper.find('RatingIcon').last().simulate('click')
       wrapper
         .find('RatingIcon[active=true]')
         .should.have.length(5, 'Some RatingIcons did not retain their "active" prop')
@@ -242,10 +187,7 @@ describe('Rating', () => {
     it('prevents the rating from being cleared', () => {
       const wrapper = mount(<Rating disabled maxRating={3} rating={3} />)
 
-      wrapper
-        .find('RatingIcon')
-        .last()
-        .simulate('click')
+      wrapper.find('RatingIcon').last().simulate('click')
       wrapper
         .find('RatingIcon[active=true]')
         .should.have.length(3, 'Some RatingIcons lost their "active" prop')
@@ -254,10 +196,7 @@ describe('Rating', () => {
     it('prevents icons from becoming selected on mouse enter', () => {
       const wrapper = mount(<Rating disabled maxRating={3} />)
 
-      wrapper
-        .find('RatingIcon')
-        .last()
-        .simulate('mouseEnter')
+      wrapper.find('RatingIcon').last().simulate('mouseEnter')
       wrapper
         .find('RatingIcon[selected=true]')
         .should.have.length(0, 'Some RatingIcons became "selected"')
@@ -266,10 +205,7 @@ describe('Rating', () => {
     it('prevents icons from becoming unselected on mouse leave', () => {
       const wrapper = mount(<Rating maxRating={3} />)
 
-      wrapper
-        .find('RatingIcon')
-        .last()
-        .simulate('mouseEnter')
+      wrapper.find('RatingIcon').last().simulate('mouseEnter')
       wrapper
         .find('RatingIcon[selected=true]')
         .should.have.length(3, 'Not every RatingIcon was selected on mouseEnter')
@@ -284,10 +220,7 @@ describe('Rating', () => {
     it('prevents icons from becoming active on click', () => {
       const wrapper = mount(<Rating disabled maxRating={3} />)
 
-      wrapper
-        .find('RatingIcon')
-        .last()
-        .simulate('click')
+      wrapper.find('RatingIcon').last().simulate('click')
       wrapper
         .find('RatingIcon[active=true]')
         .should.have.length(0, 'Some RatingIcons became "active"')
@@ -299,7 +232,8 @@ describe('Rating', () => {
       _.times(10, (i) => {
         const maxRating = i + 1
         shallow(<Rating maxRating={maxRating} />)
-          .should.have.exactly(maxRating).descendants('RatingIcon')
+          .should.have.exactly(maxRating)
+          .descendants('RatingIcon')
       })
     })
   })
@@ -329,6 +263,24 @@ describe('Rating', () => {
           .find('RatingIcon[active=true]')
           .should.have.length(rating, `Rating should have ${rating} RatingIcon with "active" prop`)
       })
+    })
+  })
+
+  describe('tabIndex', () => {
+    it('sets icons tabIndex to -1 to prevent focus when element is disabled', () => {
+      shallow(<Rating maxRating={3} />)
+        .find('RatingIcon')
+        .forEach((node) => node.should.have.prop('tabIndex', 0))
+
+      shallow(<Rating disabled maxRating={3} />)
+        .find('RatingIcon')
+        .forEach((node) => node.should.have.prop('tabIndex', -1))
+    })
+
+    it('sets Rating element tabIndex to 0 to allow focusing the whole group when disabled', () => {
+      shallow(<Rating maxRating={3} />).should.have.prop('tabIndex', -1)
+
+      shallow(<Rating disabled maxRating={3} />).should.have.prop('tabIndex', 0)
     })
   })
 })

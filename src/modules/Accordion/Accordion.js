@@ -1,10 +1,11 @@
-import cx from 'classnames'
+import cx from 'clsx'
 import PropTypes from 'prop-types'
 import React from 'react'
 
 import { getUnhandledProps, useKeyOnly } from '../../lib'
 import AccordionAccordion from './AccordionAccordion'
 import AccordionContent from './AccordionContent'
+import AccordionPanel from './AccordionPanel'
 import AccordionTitle from './AccordionTitle'
 
 /**
@@ -41,6 +42,7 @@ Accordion.propTypes = {
 
 Accordion.Accordion = AccordionAccordion
 Accordion.Content = AccordionContent
+Accordion.Panel = AccordionPanel
 Accordion.Title = AccordionTitle
 
 export default Accordion

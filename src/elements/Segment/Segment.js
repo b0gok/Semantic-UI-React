@@ -1,4 +1,4 @@
-import cx from 'classnames'
+import cx from 'clsx'
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
@@ -15,6 +15,7 @@ import {
   useValueAndKey,
 } from '../../lib'
 import SegmentGroup from './SegmentGroup'
+import SegmentInline from './SegmentInline'
 
 /**
  * A segment is used to create a grouping of related content.
@@ -34,6 +35,7 @@ function Segment(props) {
     floated,
     inverted,
     loading,
+    placeholder,
     padded,
     piled,
     raised,
@@ -56,6 +58,7 @@ function Segment(props) {
     useKeyOnly(disabled, 'disabled'),
     useKeyOnly(inverted, 'inverted'),
     useKeyOnly(loading, 'loading'),
+    useKeyOnly(placeholder, 'placeholder'),
     useKeyOnly(piled, 'piled'),
     useKeyOnly(raised, 'raised'),
     useKeyOnly(secondary, 'secondary'),
@@ -80,10 +83,11 @@ function Segment(props) {
 }
 
 Segment.Group = SegmentGroup
+Segment.Inline = SegmentInline
 
 Segment.propTypes = {
   /** An element type to render as (string or function). */
-  as: customPropTypes.as,
+  as: PropTypes.elementType,
 
   /** Attach segment to other content, like a header. */
   attached: PropTypes.oneOfType([PropTypes.bool, PropTypes.oneOf(['top', 'bottom'])]),
@@ -126,6 +130,9 @@ Segment.propTypes = {
 
   /** A segment can increase its padding. */
   padded: PropTypes.oneOfType([PropTypes.bool, PropTypes.oneOf(['very'])]),
+
+  /** A segment can be used to reserve space for conditionally displayed content. */
+  placeholder: PropTypes.bool,
 
   /** Formatted to look like a pile of pages. */
   piled: PropTypes.bool,

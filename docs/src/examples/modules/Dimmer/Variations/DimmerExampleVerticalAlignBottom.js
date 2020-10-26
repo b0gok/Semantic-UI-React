@@ -14,13 +14,17 @@ export default class DimmerExampleVerticalAlignBottom extends Component {
       <div>
         <Dimmer.Dimmable as={Segment} dimmed={active}>
           <p>
-            <Image src='/assets/images/wireframe/short-paragraph.png' />
+            <Image src='/images/wireframe/short-paragraph.png' />
           </p>
           <p>
-            <Image src='/assets/images/wireframe/short-paragraph.png' />
+            <Image src='/images/wireframe/short-paragraph.png' />
           </p>
 
-          <Dimmer active={active} onClickOutside={this.handleHide} verticalAlign='bottom'>
+          <Dimmer
+            active={active}
+            onClickOutside={this.handleHide}
+            verticalAlign='bottom'
+          >
             <Header as='h2' inverted>
               Title
             </Header>

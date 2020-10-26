@@ -1,4 +1,4 @@
-import path from 'path'
+const path = require('path')
 
 // ------------------------------------
 // Environment vars
@@ -17,8 +17,8 @@ const envConfig = {
   path_base: __dirname,
   dir_src: 'src',
   dir_dist: 'dist',
-  dir_dll: 'dll',
   dir_docs_dist: 'docs/dist',
+  dir_docs_public: 'docs/public',
   dir_docs_src: 'docs/src',
 }
 
@@ -31,20 +31,14 @@ const paths = {
   base,
   src: base.bind(null, envConfig.dir_src),
   dist: base.bind(null, envConfig.dir_dist),
-  dll: base.bind(null, envConfig.dir_dll),
   docsDist: base.bind(null, envConfig.dir_docs_dist),
+  docsPublic: base.bind(null, envConfig.dir_docs_public),
   docsSrc: base.bind(null, envConfig.dir_docs_src),
 }
 
 const config = {
   ...envConfig,
   paths,
-
-  // ----------------------------------
-  // Server Configuration
-  // ----------------------------------
-  server_host: 'localhost',
-  server_port: process.env.PORT || 8080,
 
   // ----------------------------------
   // Compiler Configuration
@@ -59,7 +53,7 @@ const config = {
     __TEST__,
     __PROD__,
   },
-  compiler_hash_type: __PROD__ ? 'chunkhash' : 'hash',
+  compiler_hash_type: 'hash',
   compiler_fail_on_warning: __TEST__ || __PROD__,
   compiler_output_path: paths.base(envConfig.dir_docs_dist),
   compiler_public_path: '/',
@@ -67,7 +61,7 @@ const config = {
     hash: false, // the hash of the compilation
     version: false, // webpack version info
     timings: true, // timing info
-    assets: true, // assets info
+    assets: false, // assets info
     chunks: false, // chunk info
     colors: true, // with console colors
     chunkModules: false, // built modules info to chunk info
@@ -80,21 +74,8 @@ const config = {
     modulesSort: '', // (string) sort the modules by that field
     chunksSort: '', // (string) sort the chunks by that field
     assetsSort: '', // (string) sort the assets by that field
+    warningsFilter: [/critical dependency:/i],
   },
-  compiler_vendor: [
-    '@babel/standalone',
-    'brace',
-    'brace/ext/language_tools',
-    'brace/mode/jsx',
-    'brace/mode/html',
-    'brace/theme/tomorrow',
-    'classnames',
-    'copy-to-clipboard',
-    'faker',
-    'react',
-    'react-ace',
-    'react-dom',
-  ],
 }
 
-export default config
+module.exports = config

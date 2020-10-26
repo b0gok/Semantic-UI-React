@@ -1,11 +1,10 @@
-import _ from 'lodash'
 import PropTypes from 'prop-types'
-import React, { Component } from 'react'
-import { NavLink, Route } from 'react-router-dom'
+import React, { createElement, PureComponent } from 'react'
+import { Link, withRouteData } from 'react-static'
+import { Button } from 'semantic-ui-react'
 
-import { Button } from 'src'
-import { getUnhandledProps } from 'src/lib'
 import { repoURL } from 'docs/src/utils'
+import { isBrowser } from 'src/lib'
 
 const docsButtonStyle = {
   position: 'fixed',
@@ -17,46 +16,46 @@ const docsButtonStyle = {
 }
 
 const style = (
-  <style>{`
+  <style>
+    {`
     @keyframes back-to-docs {
         0% { transform: translateY(0); }
         50% { transform: translateY(0.35em); }
         100% { transform: translateY(0); }
     }
-  `}</style>
+  `}
+  </style>
 )
 
-export default class LayoutsLayout extends Component {
-  static propTypes = {
-    component: PropTypes.func,
-    render: PropTypes.func,
-    computedMatch: PropTypes.object,
+class LayoutsLayout extends PureComponent {
+  constructor(props) {
+    super(props)
+
+    this.state = { component: require(`docs/src/layouts/${props.componentFilename}`).default }
   }
 
   componentDidMount() {
-    scrollTo(0, 0)
+    if (isBrowser()) window.scrollTo(0, 0)
   }
 
   componentDidUpdate() {
-    scrollTo(0, 0)
+    if (isBrowser()) window.scrollTo(0, 0)
   }
 
-  renderChildren = (props) => {
-    const { component: Children, computedMatch, render } = this.props
-
-    if (render) return render()
-
-    const filename = `${_.startCase(computedMatch.params.name).replace(' ', '')}Layout.js`
+  render() {
+    const { componentFilename } = this.props
+    const { component } = this.state
 
     return (
       <div>
         {style}
-        <Children {...props} />
+        {createElement(component)}
+
         <div style={docsButtonStyle}>
-          <Button as={NavLink} to='/layouts' color='teal' icon='left arrow' content='Layouts' />
+          <Button as={Link} to='/layouts' color='teal' icon='left arrow' content='Layouts' />
           <Button
-            as={NavLink}
-            to={`${repoURL}/blob/master/docs/src/layouts/${filename}`}
+            as={Link}
+            to={`${repoURL}/blob/master/docs/src/layouts/${componentFilename}`}
             icon='github'
             content='Source'
             secondary
@@ -66,10 +65,10 @@ export default class LayoutsLayout extends Component {
       </div>
     )
   }
-
-  render() {
-    const rest = getUnhandledProps(LayoutsLayout, this.props)
-
-    return <Route {...rest} render={this.renderChildren} />
-  }
 }
+
+LayoutsLayout.propTypes = {
+  componentFilename: PropTypes.string.isRequired,
+}
+
+export default withRouteData(LayoutsLayout)

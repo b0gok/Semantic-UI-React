@@ -1,3 +1,7 @@
+/* eslint-disable max-classes-per-file */
+/* eslint-disable react/no-multi-comp */
+
+import { createMedia } from '@artsy/fresnel'
 import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 import {
@@ -10,15 +14,22 @@ import {
   Image,
   List,
   Menu,
-  Responsive,
   Segment,
   Sidebar,
   Visibility,
 } from 'semantic-ui-react'
 
-/* eslint-disable react/no-multi-comp */
-/* Heads up! HomepageHeading uses inline styling, however it's not the best practice. Use CSS or styled components for
- * such things.
+const { MediaContextProvider, Media } = createMedia({
+  breakpoints: {
+    mobile: 0,
+    tablet: 768,
+    computer: 1024,
+  },
+})
+
+/* Heads up!
+ * HomepageHeading uses inline styling, however it's not the best practice. Use CSS or styled
+ * components for such things.
  */
 const HomepageHeading = ({ mobile }) => (
   <Container text>
@@ -69,7 +80,7 @@ class DesktopContainer extends Component {
     const { fixed } = this.state
 
     return (
-      <Responsive {...Responsive.onlyComputer}>
+      <Media greaterThan='mobile'>
         <Visibility
           once={false}
           onBottomPassed={this.showFixedMenu}
@@ -110,7 +121,7 @@ class DesktopContainer extends Component {
         </Visibility>
 
         {children}
-      </Responsive>
+      </Media>
     )
   }
 }
@@ -122,22 +133,25 @@ DesktopContainer.propTypes = {
 class MobileContainer extends Component {
   state = {}
 
-  handlePusherClick = () => {
-    const { sidebarOpened } = this.state
+  handleSidebarHide = () => this.setState({ sidebarOpened: false })
 
-    if (sidebarOpened) this.setState({ sidebarOpened: false })
-  }
-
-  handleToggle = () => this.setState({ sidebarOpened: !this.state.sidebarOpened })
+  handleToggle = () => this.setState({ sidebarOpened: true })
 
   render() {
     const { children } = this.props
     const { sidebarOpened } = this.state
 
     return (
-      <Responsive {...Responsive.onlyMobile}>
+      <Media as={Sidebar.Pushable} at='mobile'>
         <Sidebar.Pushable>
-          <Sidebar as={Menu} animation='uncover' inverted vertical visible={sidebarOpened}>
+          <Sidebar
+            as={Menu}
+            animation='overlay'
+            inverted
+            onHide={this.handleSidebarHide}
+            vertical
+            visible={sidebarOpened}
+          >
             <Menu.Item as='a' active>
               Home
             </Menu.Item>
@@ -148,11 +162,7 @@ class MobileContainer extends Component {
             <Menu.Item as='a'>Sign Up</Menu.Item>
           </Sidebar>
 
-          <Sidebar.Pusher
-            dimmed={sidebarOpened}
-            onClick={this.handlePusherClick}
-            style={{ minHeight: '100vh' }}
-          >
+          <Sidebar.Pusher dimmed={sidebarOpened}>
             <Segment
               inverted
               textAlign='center'
@@ -180,7 +190,7 @@ class MobileContainer extends Component {
             {children}
           </Sidebar.Pusher>
         </Sidebar.Pushable>
-      </Responsive>
+      </Media>
     )
   }
 }
@@ -190,10 +200,14 @@ MobileContainer.propTypes = {
 }
 
 const ResponsiveContainer = ({ children }) => (
-  <div>
+  /* Heads up!
+   * For large applications it may not be best option to put all page into these containers at
+   * they will be rendered twice for SSR.
+   */
+  <MediaContextProvider>
     <DesktopContainer>{children}</DesktopContainer>
     <MobileContainer>{children}</MobileContainer>
-  </div>
+  </MediaContextProvider>
 )
 
 ResponsiveContainer.propTypes = {
@@ -222,7 +236,7 @@ const HomepageLayout = () => (
             </p>
           </Grid.Column>
           <Grid.Column floated='right' width={6}>
-            <Image bordered rounded size='large' src='/assets/images/wireframe/white-image.png' />
+            <Image bordered rounded size='large' src='/images/wireframe/white-image.png' />
           </Grid.Column>
         </Grid.Row>
         <Grid.Row>
@@ -247,7 +261,7 @@ const HomepageLayout = () => (
               "I shouldn't have gone with their competitor."
             </Header>
             <p style={{ fontSize: '1.33em' }}>
-              <Image avatar src='/assets/images/avatar/large/nan.jpg' />
+              <Image avatar src='/images/avatar/large/nan.jpg' />
               <b>Nan</b> Chief Fun Officer Acme Toys
             </p>
           </Grid.Column>

@@ -1,12 +1,13 @@
+// Third party
+export { Ref } from '@fluentui/react-component-ref'
+
 // Addons
 export Confirm from './addons/Confirm'
-export MountNode from './addons/MountNode'
 export Pagination from './addons/Pagination'
 export PaginationItem from './addons/Pagination/PaginationItem'
 export Portal from './addons/Portal'
+export PortalInner from './addons/Portal/PortalInner'
 export Radio from './addons/Radio'
-export Ref from './addons/Ref'
-export Responsive from './addons/Responsive'
 export Select from './addons/Select'
 export TextArea from './addons/TextArea'
 export TransitionablePortal from './addons/TransitionablePortal'
@@ -91,6 +92,12 @@ export ListList from './elements/List/ListList'
 
 export Loader from './elements/Loader'
 
+export Placeholder from './elements/Placeholder'
+export PlaceholderHeader from './elements/Placeholder/PlaceholderHeader'
+export PlaceholderImage from './elements/Placeholder/PlaceholderImage'
+export PlaceholderLine from './elements/Placeholder/PlaceholderLine'
+export PlaceholderParagraph from './elements/Placeholder/PlaceholderParagraph'
+
 export Rail from './elements/Rail'
 
 export Reveal from './elements/Reveal'
@@ -98,6 +105,7 @@ export RevealContent from './elements/Reveal/RevealContent'
 
 export Segment from './elements/Segment'
 export SegmentGroup from './elements/Segment/SegmentGroup'
+export SegmentInline from './elements/Segment/SegmentInline'
 
 export Step from './elements/Step'
 export StepContent from './elements/Step/StepContent'
@@ -109,6 +117,7 @@ export StepTitle from './elements/Step/StepTitle'
 export Accordion from './modules/Accordion/Accordion'
 export AccordionAccordion from './modules/Accordion/AccordionAccordion'
 export AccordionContent from './modules/Accordion/AccordionContent'
+export AccordionPanel from './modules/Accordion/AccordionPanel'
 export AccordionTitle from './modules/Accordion/AccordionTitle'
 
 export Checkbox from './modules/Checkbox'
@@ -123,6 +132,7 @@ export DropdownHeader from './modules/Dropdown/DropdownHeader'
 export DropdownItem from './modules/Dropdown/DropdownItem'
 export DropdownMenu from './modules/Dropdown/DropdownMenu'
 export DropdownSearchInput from './modules/Dropdown/DropdownSearchInput'
+export DropdownText from './modules/Dropdown/DropdownText'
 
 export Embed from './modules/Embed'
 
@@ -130,6 +140,7 @@ export Modal from './modules/Modal'
 export ModalActions from './modules/Modal/ModalActions'
 export ModalContent from './modules/Modal/ModalContent'
 export ModalDescription from './modules/Modal/ModalDescription'
+export ModalDimmer from './modules/Modal/ModalDimmer'
 export ModalHeader from './modules/Modal/ModalHeader'
 
 export Popup from './modules/Popup'

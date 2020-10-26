@@ -1,16 +1,28 @@
 import React, { Component } from 'react'
 import { Form, Grid, Image, Transition } from 'semantic-ui-react'
 
-const transitions = ['jiggle', 'flash', 'shake', 'pulse', 'tada', 'bounce', 'glow']
+const transitions = [
+  'jiggle',
+  'flash',
+  'shake',
+  'pulse',
+  'tada',
+  'bounce',
+  'glow',
+]
 
-const options = transitions.map(name => ({ key: name, text: name, value: name }))
+const options = transitions.map((name) => ({
+  key: name,
+  text: name,
+  value: name,
+}))
 
 export default class TransitionExampleTransitionExplorer extends Component {
   state = { animation: transitions[0], duration: 500, visible: true }
 
   handleChange = (e, { name, value }) => this.setState({ [name]: value })
-
-  toggleVisibility = () => this.setState({ visible: !this.state.visible })
+  toggleVisibility = () =>
+    this.setState((prevState) => ({ visible: !prevState.visible }))
 
   render() {
     const { animation, duration, visible } = this.state
@@ -39,8 +51,12 @@ export default class TransitionExampleTransitionExplorer extends Component {
         </Grid.Column>
 
         <Grid.Column>
-          <Transition animation={animation} duration={duration} visible={visible}>
-            <Image centered size='small' src='/assets/images/leaves/5.png' />
+          <Transition
+            animation={animation}
+            duration={duration}
+            visible={visible}
+          >
+            <Image centered size='small' src='/images/leaves/5.png' />
           </Transition>
         </Grid.Column>
       </Grid>

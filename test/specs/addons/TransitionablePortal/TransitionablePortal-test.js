@@ -33,17 +33,17 @@ describe('TransitionablePortal', () => {
 
   describe('children', () => {
     it('renders a Portal', () => {
-      wrapperShallow(<TransitionablePortal {...requiredProps} />)
-        .should.have.descendants('Portal')
+      wrapperShallow(<TransitionablePortal {...requiredProps} />).should.have.descendants('Portal')
     })
 
     it('renders a Transition', () => {
-      wrapperShallow(<TransitionablePortal {...requiredProps} />)
-        .should.have.descendants('Transition')
+      wrapperShallow(<TransitionablePortal {...requiredProps} />).should.have.descendants(
+        'Transition',
+      )
     })
   })
 
-  describe('componentWillReceiveProps', () => {
+  describe('getDerivedStateFromProps', () => {
     it('passes `open` prop to `portalOpen` when defined', () => {
       wrapperMount(<TransitionablePortal {...requiredProps} />)
 
@@ -64,13 +64,13 @@ describe('TransitionablePortal', () => {
   describe('onClose', () => {
     it('is called with (null, data) when Portal closes', (done) => {
       const onClose = sandbox.spy()
-      const trigger = <button />
+
       wrapperMount(
         <TransitionablePortal
           {...requiredProps}
           onClose={onClose}
           transition={quickTransition}
-          trigger={trigger}
+          trigger={<button />}
         />,
       )
 
@@ -84,8 +84,13 @@ describe('TransitionablePortal', () => {
     })
 
     it('changes `portalOpen` to false', () => {
-      const trigger = <button />
-      wrapperMount(<TransitionablePortal {...requiredProps} transition={quickTransition} trigger={trigger} />)
+      wrapperMount(
+        <TransitionablePortal
+          {...requiredProps}
+          transition={quickTransition}
+          trigger={<button />}
+        />,
+      )
 
       wrapper.find('button').simulate('click')
       domEvent.click(document.body)
@@ -123,21 +128,18 @@ describe('TransitionablePortal', () => {
   describe('onOpen', () => {
     it('is called with (null, data) when Portal opens', () => {
       const onOpen = sandbox.spy()
-      const trigger = <button />
 
-      wrapperMount(<TransitionablePortal {...requiredProps} onOpen={onOpen} trigger={trigger} />)
-        .find('button')
-        .simulate('click')
+      wrapperMount(<TransitionablePortal {...requiredProps} onOpen={onOpen} trigger={<button />} />)
+      wrapper.find('button').simulate('click')
 
       onOpen.should.have.been.calledOnce()
       onOpen.should.have.been.calledWithMatch(null, { portalOpen: true })
     })
 
     it('changes `portalOpen` to true', () => {
-      const trigger = <button />
-      wrapperMount(<TransitionablePortal {...requiredProps} trigger={trigger} />)
+      wrapperMount(<TransitionablePortal {...requiredProps} trigger={<button />} />)
 
-      wrapper.find('button').simulate('click', event)
+      wrapper.find('button').simulate('click')
       wrapper.should.have.state('portalOpen', true)
     })
   })
@@ -146,6 +148,7 @@ describe('TransitionablePortal', () => {
     it('does not block update of state on Portal close', () => {
       wrapperMount(<TransitionablePortal {...requiredProps} open />)
       wrapper.should.have.state('portalOpen', true)
+      wrapper.update()
 
       domEvent.click(document.body)
       wrapper.should.have.state('portalOpen', false)

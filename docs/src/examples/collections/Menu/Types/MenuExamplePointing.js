@@ -12,7 +12,11 @@ export default class MenuExamplePointing extends Component {
     return (
       <div>
         <Menu pointing>
-          <Menu.Item name='home' active={activeItem === 'home'} onClick={this.handleItemClick} />
+          <Menu.Item
+            name='home'
+            active={activeItem === 'home'}
+            onClick={this.handleItemClick}
+          />
           <Menu.Item
             name='messages'
             active={activeItem === 'messages'}
@@ -31,7 +35,7 @@ export default class MenuExamplePointing extends Component {
         </Menu>
 
         <Segment>
-          <img src='/assets/images/wireframe/paragraph.png' />
+          <img src='/images/wireframe/paragraph.png' />
         </Segment>
       </div>
     )

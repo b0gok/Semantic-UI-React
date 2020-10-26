@@ -11,19 +11,23 @@ export default class CommentExampleCollapsed extends Component {
 
     return (
       <div>
-        <Checkbox defaultChecked label='Collapse comments' onChange={this.handleCheckbox} />
+        <Checkbox
+          defaultChecked
+          label='Collapse comments'
+          onChange={this.handleCheckbox}
+        />
 
         <Comment.Group>
           <Comment>
-            <Comment.Avatar as='a' src='/assets/images/avatar/small/christian.jpg' />
+            <Comment.Avatar as='a' src='/images/avatar/small/christian.jpg' />
             <Comment.Content>
               <Comment.Author as='a'>Christian Rocha</Comment.Author>
               <Comment.Metadata>
                 <span>2 days ago</span>
               </Comment.Metadata>
               <Comment.Text>
-                I'm very interested in this motherboard. Do you know if it'd work in a Intel LGA775
-                CPU socket?
+                I'm very interested in this motherboard. Do you know if it'd
+                work in a Intel LGA775 CPU socket?
               </Comment.Text>
               <Comment.Actions>
                 <a>Reply</a>
@@ -32,7 +36,7 @@ export default class CommentExampleCollapsed extends Component {
 
             <Comment.Group collapsed={collapsed}>
               <Comment>
-                <Comment.Avatar as='a' src='/assets/images/avatar/small/elliot.jpg' />
+                <Comment.Avatar as='a' src='/images/avatar/small/elliot.jpg' />
                 <Comment.Content>
                   <Comment.Author as='a'>Elliot Fu</Comment.Author>
                   <Comment.Metadata>
@@ -46,7 +50,10 @@ export default class CommentExampleCollapsed extends Component {
 
                 <Comment.Group>
                   <Comment>
-                    <Comment.Avatar as='a' src='/assets/images/avatar/small/jenny.jpg' />
+                    <Comment.Avatar
+                      as='a'
+                      src='/images/avatar/small/jenny.jpg'
+                    />
                     <Comment.Content>
                       <Comment.Author as='a'>Jenny Hess</Comment.Author>
                       <Comment.Metadata>

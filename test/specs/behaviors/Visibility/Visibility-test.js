@@ -14,7 +14,7 @@ const wrapperMount = (node, opts) => {
 
 const mockScroll = (top, bottom) => {
   if (wrapper) {
-    wrapper.instance().ref = {
+    wrapper.instance().ref.current = {
       getBoundingClientRect: () => ({
         bottom,
         top,
@@ -34,35 +34,63 @@ const expectations = [
     name: 'topPassed',
     callbackName: 'onTopPassed',
     reversible: true,
-    truthy: [[-1, 100], [-100, -1]],
-    falsy: [[0, 100], [window.innerHeight + 100, window.innerHeight + 300]],
+    truthy: [
+      [-1, 100],
+      [-100, -1],
+    ],
+    falsy: [
+      [0, 100],
+      [window.innerHeight + 100, window.innerHeight + 300],
+    ],
   },
   {
     name: 'bottomPassed',
     callbackName: 'onBottomPassed',
     reversible: true,
-    truthy: [[-100, -1], [-100, -10]],
-    falsy: [[-10, 0], [-100, window.innerHeight]],
+    truthy: [
+      [-100, -1],
+      [-100, -10],
+    ],
+    falsy: [
+      [-10, 0],
+      [-100, window.innerHeight],
+    ],
   },
   {
     name: 'topVisible',
     callbackName: 'onTopVisible',
     reversible: true,
-    truthy: [[0, 100], [window.innerHeight, window.innerHeight]],
-    falsy: [[-1, 100], [window.innerHeight + 1, window.innerHeight + 2]],
+    truthy: [
+      [0, 100],
+      [window.innerHeight, window.innerHeight],
+    ],
+    falsy: [
+      [-1, 100],
+      [window.innerHeight + 1, window.innerHeight + 2],
+    ],
   },
   {
     name: 'bottomVisible',
     callbackName: 'onBottomVisible',
     reversible: true,
-    truthy: [[-100, 0], [-100, window.innerHeight]],
-    falsy: [[-100, -1], [0, window.innerHeight + 1]],
+    truthy: [
+      [-100, 0],
+      [-100, window.innerHeight],
+    ],
+    falsy: [
+      [-100, -1],
+      [0, window.innerHeight + 1],
+    ],
   },
   {
     name: 'passing',
     callbackName: 'onPassing',
     reversible: true,
-    truthy: [[-1, window.innerHeight + 1], [-1, window.innerHeight - 1], [-1, 0]],
+    truthy: [
+      [-1, window.innerHeight + 1],
+      [-1, window.innerHeight - 1],
+      [-1, 0],
+    ],
     falsy: [
       [0, window.innerHeight],
       [1, window.innerHeight + 1],
@@ -79,12 +107,18 @@ const expectations = [
       [-1, window.innerHeight],
       [0, window.innerHeight + 1],
     ],
-    falsy: [[-2, -1], [window.innerHeight + 1, window.innerHeight + 2]],
+    falsy: [
+      [-2, -1],
+      [window.innerHeight + 1, window.innerHeight + 2],
+    ],
   },
   {
     name: 'offScreen',
     callbackName: 'onOffScreen',
-    truthy: [[-2, -1], [window.innerHeight + 1, window.innerHeight + 2]],
+    truthy: [
+      [-2, -1],
+      [window.innerHeight + 1, window.innerHeight + 2],
+    ],
     falsy: [
       [0, window.innerHeight],
       [-1, window.innerHeight + 1],
@@ -95,7 +129,11 @@ const expectations = [
   {
     name: 'fits',
     truthy: [[0, window.innerHeight]],
-    falsy: [[-1, window.innerHeight + 1], [0, window.innerHeight + 1], [-1, window.innerHeight]],
+    falsy: [
+      [-1, window.innerHeight + 1],
+      [0, window.innerHeight + 1],
+      [-1, window.innerHeight],
+    ],
   },
 ]
 
@@ -103,15 +141,17 @@ describe('Visibility', () => {
   common.isConformant(Visibility)
 
   beforeEach(() => {
-    sandbox
-      .stub(window, 'requestAnimationFrame')
-      .callsArg(0)
-      .returns(1)
+    sandbox.stub(window, 'requestAnimationFrame').callsArg(0).returns(1)
     wrapper = undefined
   })
 
   afterEach(() => {
-    if (wrapper && wrapper.unmount) wrapper.unmount()
+    if (wrapper && wrapper.unmount) {
+      try {
+        wrapper.unmount()
+        // eslint-disable-next-line no-empty
+      } catch (e) {}
+    }
   })
 
   describe('calculations', () => {
@@ -271,6 +311,20 @@ describe('Visibility', () => {
           calculations: { direction: 'up' },
         })
       })
+
+      it('gets direction from `context` element', () => {
+        const context = document.createElement('div')
+        const onUpdate = sandbox.spy()
+
+        sandbox.stub(context, 'scrollTop').value(0)
+        mount(<Visibility context={context} onUpdate={onUpdate} />)
+
+        sandbox.stub(context, 'scrollTop').value(5)
+        domEvent.scroll(context)
+        onUpdate.should.have.been.calledWithMatch(null, {
+          calculations: { direction: 'down' },
+        })
+      })
     })
   })
 
@@ -362,8 +416,8 @@ describe('Visibility', () => {
         const opts = { [callbackName]: callback }
 
         const offset = 10
-        const falsyCond = _.map(_.first(falsy), value => value + offset)
-        const truthyCond = _.map(_.first(truthy), value => value + offset)
+        const falsyCond = _.map(_.first(falsy), (value) => value + offset)
+        const truthyCond = _.map(_.first(truthy), (value) => value + offset)
 
         wrapperMount(<Visibility {...opts} offset={offset} />)
         mockScroll(...truthyCond)
@@ -541,7 +595,7 @@ describe('Visibility', () => {
   describe('updateOn', () => {
     beforeEach(() => {
       requestAnimationFrame.restore()
-      sandbox.stub(window, 'requestAnimationFrame').callsFake(fn => setTimeout(() => fn(), 0))
+      sandbox.stub(window, 'requestAnimationFrame').callsFake((fn) => setTimeout(() => fn(), 0))
     })
 
     it('defaults to "events"', () => {

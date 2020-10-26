@@ -1,13 +1,12 @@
-import cx from 'classnames'
+import cx from 'clsx'
 import PropTypes from 'prop-types'
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 
 import {
   createShorthandFactory,
   customPropTypes,
   getElementType,
   getUnhandledProps,
-  shallowEqual,
 } from '../../lib'
 
 export const names = [
@@ -133,6 +132,8 @@ export const names = [
   'algeria',
   'ec',
   'ecuador',
+  'england',
+  'gb eng',
   'ee',
   'estonia',
   'eg',
@@ -162,6 +163,7 @@ export const names = [
   'ga',
   'gabon',
   'gb',
+  'uk',
   'united kingdom',
   'gd',
   'grenada',
@@ -507,26 +509,7 @@ export const names = [
 /**
  * A flag is is used to represent a political state.
  */
-class Flag extends Component {
-  static propTypes = {
-    /** An element type to render as (string or function). */
-    as: customPropTypes.as,
-
-    /** Additional classes. */
-    className: PropTypes.string,
-
-    /** Flag name, can use the two digit country code, the full name, or a common alias. */
-    name: customPropTypes.suggest(names),
-  }
-
-  static defaultProps = {
-    as: 'i',
-  }
-
-  shouldComponentUpdate(nextProps) {
-    return !shallowEqual(this.props, nextProps)
-  }
-
+class Flag extends PureComponent {
   render() {
     const { className, name } = this.props
     const classes = cx(name, 'flag', className)
@@ -537,6 +520,21 @@ class Flag extends Component {
   }
 }
 
-Flag.create = createShorthandFactory(Flag, value => ({ name: value }))
+Flag.propTypes = {
+  /** An element type to render as (string or function). */
+  as: PropTypes.elementType,
+
+  /** Additional classes. */
+  className: PropTypes.string,
+
+  /** Flag name, can use the two digit country code, the full name, or a common alias. */
+  name: customPropTypes.suggest(names),
+}
+
+Flag.defaultProps = {
+  as: 'i',
+}
+
+Flag.create = createShorthandFactory(Flag, (value) => ({ name: value }))
 
 export default Flag

@@ -1,16 +1,14 @@
 import PropTypes from 'prop-types'
-import React, { PureComponent } from 'react'
+import React, { Component } from 'react'
 import { Header, Label } from 'semantic-ui-react'
 
 const titleStyle = {
   margin: 0,
 }
 
-export default class ComponentExampleTitle extends PureComponent {
-  static propTypes = {
-    description: PropTypes.node,
-    title: PropTypes.node,
-    suiVersion: PropTypes.string,
+export default class ComponentExampleTitle extends Component {
+  shouldComponentUpdate() {
+    return false
   }
 
   render() {
@@ -35,4 +33,10 @@ export default class ComponentExampleTitle extends PureComponent {
       </div>
     )
   }
+}
+
+ComponentExampleTitle.propTypes = {
+  description: PropTypes.node,
+  title: PropTypes.node,
+  suiVersion: PropTypes.string,
 }

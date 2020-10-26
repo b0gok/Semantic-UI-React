@@ -68,6 +68,7 @@ const countries = [
   { name: 'Ecuador', countryCode: 'ec' },
   { name: 'Egypt', countryCode: 'eg' },
   { name: 'El Salvador', countryCode: 'sv' },
+  { name: 'England', countryCode: 'gb eng' },
   { name: 'Equatorial Guinea', countryCode: 'gq' },
   { name: 'Eritrea', countryCode: 'er' },
   { name: 'Estonia', countryCode: 'ee' },
@@ -230,7 +231,7 @@ const countries = [
   { name: 'U.A.E.', countryCode: 'ae', alias: 'United Arab Emirates' },
   { name: 'Uganda', countryCode: 'ug' },
   { name: 'Ukraine', countryCode: 'ua' },
-  { name: 'United Kingdom', countryCode: 'gb' },
+  { name: 'United Kingdom', countryCode: 'gb', alias: 'uk' },
   { name: 'United States', countryCode: 'us', alias: 'America' },
   { name: 'Uruguay', countryCode: 'uy' },
   { name: 'US Minor Islands', countryCode: 'um' },
@@ -248,7 +249,7 @@ const countries = [
   { name: 'Zimbabwe', countryCode: 'zw' },
 ]
 
-const flagRenderer = item => <Flag name={item.countryCode} />
+const flagRenderer = (item) => <Flag name={item.countryCode} />
 
 const FlagExampleTable = () => (
   <Table>
@@ -261,7 +262,7 @@ const FlagExampleTable = () => (
       </Table.Row>
     </Table.Header>
     <Table.Body>
-      {countries.map(country => (
+      {countries.map((country) => (
         <Table.Row key={country.countryCode}>
           <Table.Cell>{flagRenderer(country)}</Table.Cell>
           <Table.Cell>{country.name}</Table.Cell>

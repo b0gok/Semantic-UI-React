@@ -5,7 +5,7 @@ import Icon from 'src/elements/Icon'
 import Image from 'src/elements/Image'
 import Label from 'src/elements/Label'
 import { numberToWord, SUI } from 'src/lib'
-import { implementsShorthandProp } from './'
+import implementsShorthandProp from './implementsShorthandProp'
 import { noClassNameFromBoolProps, noDefaultClassNameFromProp } from './classNameHelpers'
 import helpers from './commonHelpers'
 
@@ -25,7 +25,7 @@ export const implementsButtonProp = (Component, options = {}) => {
   implementsShorthandProp(Component, {
     propKey: 'button',
     ShorthandComponent: Button,
-    mapValueToProps: val => ({ content: val }),
+    mapValueToProps: (val) => ({ content: val }),
     ...options,
   })
 }
@@ -46,7 +46,7 @@ export const implementsHTMLIFrameProp = (Component, options = {}) => {
   implementsShorthandProp(Component, {
     propKey: 'iframe',
     ShorthandComponent: 'iframe',
-    mapValueToProps: src => ({ src }),
+    mapValueToProps: (src) => ({ src }),
     ...options,
   })
 }
@@ -67,7 +67,7 @@ export const implementsHTMLInputProp = (Component, options = {}) => {
   implementsShorthandProp(Component, {
     propKey: 'input',
     ShorthandComponent: 'input',
-    mapValueToProps: val => ({ type: val }),
+    mapValueToProps: (val) => ({ type: val }),
     ...options,
   })
 }
@@ -88,7 +88,7 @@ export const implementsHTMLLabelProp = (Component, options = {}) => {
   implementsShorthandProp(Component, {
     propKey: 'label',
     ShorthandComponent: 'label',
-    mapValueToProps: val => ({ children: val }),
+    mapValueToProps: (val) => ({ children: val }),
     ...options,
   })
 }
@@ -98,6 +98,9 @@ export const implementsHTMLLabelProp = (Component, options = {}) => {
  *
  * @param {function} Component The component to test.
  * @param {object} [options={}]
+ * @param {boolean} [options.alwaysPresent] Whether or not the shorthand exists by default.
+ * @param {boolean} [options.autoGenerateKey=false] Whether or not automatic key generation is
+ *   allowed for the shorthand component.
  * @param {string} [options.propKey='icon'] The name of the shorthand prop.
  * @param {string|function} [options.ShorthandComponent] The component that should be rendered from the shorthand value.
  * @param {function} [options.mapValueToProps] A function that maps a primitive value to the Component props
@@ -109,7 +112,7 @@ export const implementsIconProp = (Component, options = {}) => {
   implementsShorthandProp(Component, {
     propKey: 'icon',
     ShorthandComponent: Icon,
-    mapValueToProps: val => ({ name: val }),
+    mapValueToProps: (val) => ({ name: val }),
     ...options,
   })
 }
@@ -119,6 +122,8 @@ export const implementsIconProp = (Component, options = {}) => {
  *
  * @param {function} Component The component to test.
  * @param {object} [options={}]
+ * @param {boolean} [options.autoGenerateKey=false] Whether or not automatic key generation is
+ *   allowed for the shorthand component.
  * @param {string} [options.propKey='image'] The name of the shorthand prop.
  * @param {string|function} [options.ShorthandComponent] The component that should be rendered from the shorthand value.
  * @param {function} [options.mapValueToProps] A function that maps a primitive value to the Component props
@@ -130,7 +135,7 @@ export const implementsImageProp = (Component, options = {}) => {
   implementsShorthandProp(Component, {
     propKey: 'image',
     ShorthandComponent: Image,
-    mapValueToProps: val => ({ src: val }),
+    mapValueToProps: (val) => ({ src: val }),
     ...options,
   })
 }
@@ -140,6 +145,8 @@ export const implementsImageProp = (Component, options = {}) => {
  *
  * @param {function} Component The component to test.
  * @param {object} [options={}]
+ * @param {boolean} [options.autoGenerateKey=false] Whether or not automatic key generation is
+ *   allowed for the shorthand component.
  * @param {string} [options.propKey='label'] The name of the shorthand prop.
  * @param {string|function} [options.ShorthandComponent] The component that should be rendered from the shorthand value.
  * @param {function} [options.mapValueToProps] A function that maps a primitive value to the Component props
@@ -151,7 +158,7 @@ export const implementsLabelProp = (Component, options = {}) => {
   implementsShorthandProp(Component, {
     propKey: 'label',
     ShorthandComponent: Label,
-    mapValueToProps: val => ({ content: val }),
+    mapValueToProps: (val) => ({ content: val }),
     ...options,
   })
 }
@@ -179,7 +186,7 @@ export const implementsMultipleProp = (Component, propKey, propValues) => {
     })
 
     it('adds all possible values to className', () => {
-      const className = propValues.map(prop => `${prop} ${propKey}`).join(' ')
+      const className = propValues.map((prop) => `${prop} ${propKey}`).join(' ')
       const propValue = propValues.join(' ')
 
       shallow(createElement(Component, { [propKey]: propValue })).should.have.className(className)
@@ -253,9 +260,11 @@ export const implementsVerticalAlignProp = (
 
     alignments.forEach((propVal) => {
       it(`adds "${propVal} aligned" to className`, () => {
-        shallow(<Component {...requiredProps} verticalAlign={propVal} />).should.have.className(
-          `${propVal} ${'aligned'}`,
-        )
+        const wrapper = shallow(<Component {...requiredProps} verticalAlign={propVal} />, {
+          autoNesting: true,
+        })
+
+        wrapper.should.have.className(`${propVal} ${'aligned'}`)
       })
     })
   })

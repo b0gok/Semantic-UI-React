@@ -2,7 +2,8 @@ import React from 'react'
 import { Container, Divider, Grid, Header, Image } from 'semantic-ui-react'
 
 const InlineStyle = () => (
-  <style>{`
+  <style>
+    {`
     .grid {
       position: relative;
     }
@@ -35,7 +36,8 @@ const InlineStyle = () => (
         left: 0em;
       }
     }
-  `}</style>
+  `}
+  </style>
 )
 
 const GridLayout = () => (
@@ -157,8 +159,7 @@ const GridLayout = () => (
       <Header as='h3'>Special Variations</Header>
       <p>
         Some special variations that format grids like tables require you to specify rows. For
-        example a
-        <code>divided grid</code> or a <code>celled grid</code> requires row wrappers.
+        example a<code>divided grid</code> or a <code>celled grid</code> requires row wrappers.
       </p>
 
       <Divider section horizontal>
@@ -242,9 +243,8 @@ const GridLayout = () => (
       <Header as='h3'>Centering Content</Header>
       <p>
         If a row does not take up all sixteen grid columns, you can use a{' '}
-        <code>ui centered grid</code>,
-        <code>centered row</code>, or <code>centered column</code> to center the column contents
-        inside the grid.
+        <code>ui centered grid</code>,<code>centered row</code>, or <code>centered column</code> to
+        center the column contents inside the grid.
       </p>
 
       <Grid centered columns={2}>
@@ -258,8 +258,7 @@ const GridLayout = () => (
       <Header as='h3'>Floating Rows</Header>
       <p>
         Since Semantic UI's grid is based on flex box, a <code>left floated</code> item should come
-        first, and a
-        <code>right floated</code> item last in its row.
+        first, and a<code>right floated</code> item last in its row.
       </p>
 
       <Grid>
@@ -277,17 +276,17 @@ const GridLayout = () => (
       </p>
 
       <Grid>
-        <Grid.Column verticalAlign='right' width={8}>
+        <Grid.Column textAlign='right' width={8}>
           right aligned column
         </Grid.Column>
-        <Grid.Column verticalAlign='left' width={8}>
+        <Grid.Column textAlign='left' width={8}>
           left aligned column
         </Grid.Column>
-        <Grid.Row columns={2} verticalAlign='center'>
+        <Grid.Row columns={2} textAlign='center'>
           <Grid.Column>center aligned row</Grid.Column>
           <Grid.Column>center aligned row</Grid.Column>
         </Grid.Row>
-        <Grid.Column verticalAlign='right' width={16}>
+        <Grid.Column textAlign='right' width={16}>
           right aligned column
         </Grid.Column>
       </Grid>
@@ -298,14 +297,14 @@ const GridLayout = () => (
       <Grid verticalAlign='middle' columns={4} centered>
         <Grid.Row>
           <Grid.Column>
-            <Image src='/assets/images/wireframe/image.png' />
+            <Image src='/images/wireframe/image.png' />
           </Grid.Column>
           <Grid.Column>
-            <Image src='/assets/images/wireframe/image.png' />
-            <Image src='/assets/images/wireframe/image.png' />
+            <Image src='/images/wireframe/image.png' />
+            <Image src='/images/wireframe/image.png' />
           </Grid.Column>
           <Grid.Column>
-            <Image src='/assets/images/wireframe/image.png' />
+            <Image src='/images/wireframe/image.png' />
           </Grid.Column>
         </Grid.Row>
       </Grid>

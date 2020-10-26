@@ -29,7 +29,11 @@ const MenuExampleAttached = () => (
       <Menu.Menu position='right'>
         <div className='ui right aligned category search item'>
           <div className='ui transparent icon input'>
-            <input className='prompt' type='text' placeholder='Search animals...' />
+            <input
+              className='prompt'
+              type='text'
+              placeholder='Search animals...'
+            />
             <i className='search link icon' />
           </div>
           <div className='results' />
@@ -38,7 +42,7 @@ const MenuExampleAttached = () => (
     </Menu>
 
     <Segment attached='bottom'>
-      <img src='/assets/images/wireframe/paragraph.png' />
+      <img src='/images/wireframe/paragraph.png' />
     </Segment>
   </div>
 )

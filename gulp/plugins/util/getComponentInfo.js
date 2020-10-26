@@ -3,7 +3,11 @@ import path from 'path'
 import { defaultHandlers, parse, resolver } from 'react-docgen'
 import fs from 'fs'
 
-import { parseDefaultValue, parseDocblock, parserCustomHandler, parseType } from './'
+import config from '../../../config'
+import parseDefaultValue from './parseDefaultValue'
+import parseDocblock from './parseDocblock'
+import parserCustomHandler from './parserCustomHandler'
+import parseType from './parseType'
 
 const getComponentInfo = (filepath) => {
   const absPath = path.resolve(process.cwd(), filepath)
@@ -60,9 +64,9 @@ const getComponentInfo = (filepath) => {
 
   info.subcomponents = info.isParent
     ? fs
-      .readdirSync(dir)
-      .filter(file => subcomponentRegExp.test(file))
-      .map(file => path.basename(file, path.extname(file)))
+        .readdirSync(dir)
+        .filter((file) => subcomponentRegExp.test(file))
+        .map((file) => path.basename(file, path.extname(file)))
     : null
 
   // where this component should be exported in the api
@@ -81,6 +85,15 @@ const getComponentInfo = (filepath) => {
   // replace the component.description string with a parsed docblock object
   info.docblock = parseDocblock(info.description)
   delete info.description
+
+  // check that examples are present
+  info.examplesExist = false
+
+  if (info.isParent) {
+    info.examplesExist = fs.existsSync(
+      config.paths.docsSrc(`examples/${componentType}s/${dirname}/index.js`),
+    )
+  }
 
   // file and path info
   info.repoPath = absPath

@@ -4,7 +4,7 @@ import { Feed, Icon } from 'semantic-ui-react'
 const FeedExampleSizeLarge = () => (
   <Feed size='large'>
     <Feed.Event>
-      <Feed.Label image='/assets/images/avatar/small/elliot.jpg' />
+      <Feed.Label image='/images/avatar/small/elliot.jpg' />
       <Feed.Content>
         <Feed.Summary>
           <Feed.User>Elliot Fu</Feed.User> added you as a friend
@@ -12,8 +12,7 @@ const FeedExampleSizeLarge = () => (
         </Feed.Summary>
         <Feed.Meta>
           <Feed.Like>
-            <Icon name='like' />
-            4 Likes
+            <Icon name='like' />4 Likes
           </Feed.Like>
         </Feed.Meta>
       </Feed.Content>
@@ -26,7 +25,9 @@ const FeedExampleSizeLarge = () => (
           You submitted a new post to the page
           <Feed.Date>3 days ago</Feed.Date>
         </Feed.Summary>
-        <Feed.Extra text>I'm having a BBQ this weekend. Come by around 4pm if you can.</Feed.Extra>
+        <Feed.Extra text>
+          I'm having a BBQ this weekend. Come by around 4pm if you can.
+        </Feed.Extra>
         <Feed.Meta>
           <Feed.Like>11 Likes</Feed.Like>
         </Feed.Meta>
@@ -34,7 +35,7 @@ const FeedExampleSizeLarge = () => (
     </Feed.Event>
 
     <Feed.Event>
-      <Feed.Label image='/assets/images/avatar/small/helen.jpg' />
+      <Feed.Label image='/images/avatar/small/helen.jpg' />
       <Feed.Content>
         <Feed.Date>4 days ago</Feed.Date>
         <Feed.Summary>
@@ -43,10 +44,10 @@ const FeedExampleSizeLarge = () => (
 
         <Feed.Extra images>
           <a>
-            <img src='/assets/images/wireframe/image.png' />
+            <img src='/images/wireframe/image.png' />
           </a>
           <a>
-            <img src='/assets/images/wireframe/image.png' />
+            <img src='/images/wireframe/image.png' />
           </a>
         </Feed.Extra>
 

@@ -14,15 +14,19 @@ import hasValidTypings from './hasValidTypings'
  * @param {React.Component|Function} Component A component that should conform.
  * @param {Object} [options={}]
  * @param {Object} [options.eventTargets={}] Map of events and the child component to target.
+ * @param {Number} [options.nestingLevel=0] The nesting level of the component.
  * @param {boolean} [options.rendersChildren=false] Does this component render any children?
+ * @param {boolean} [options.rendersFragmentByDefault=false] Does this component renders React.Fragment by default?
  * @param {boolean} [options.rendersPortal=false] Does this component render a Portal powered component?
  * @param {Object} [options.requiredProps={}] Props required to render Component without errors or warnings.
  */
 export default (Component, options = {}) => {
   const {
     eventTargets = {},
+    nestingLevel = 0,
     requiredProps = {},
     rendersChildren = true,
+    rendersFragmentByDefault = false,
     rendersPortal = false,
   } = options
   const { throwError } = helpers('isConformant', Component)
@@ -89,9 +93,11 @@ export default (Component, options = {}) => {
   if (rendersChildren) {
     it('spreads user props', () => {
       const propName = 'data-is-conformant-spread-props'
-      const props = { [propName]: true }
+      const props = { as: rendersFragmentByDefault ? 'div' : undefined, [propName]: true }
 
-      shallow(<Component {...requiredProps} {...props} />).should.have.descendants(props)
+      shallow(<Component {...props} {...requiredProps} />).should.have.descendants({
+        [propName]: true,
+      })
     })
   }
 
@@ -118,11 +124,17 @@ export default (Component, options = {}) => {
         ]
         try {
           tags.forEach((tag) => {
-            shallow(<Component {...requiredProps} as={tag} />).should.have.tagName(tag)
+            shallow(<Component {...requiredProps} as={tag} />, {
+              autoNesting: true,
+              nestingLevel,
+            }).should.have.tagName(tag)
           })
         } catch (err) {
           tags.forEach((tag) => {
-            const wrapper = shallow(<Component {...requiredProps} as={tag} />)
+            const wrapper = shallow(<Component {...requiredProps} as={tag} />, {
+              autoNesting: true,
+              nestingLevel,
+            })
             wrapper.type().should.not.equal(Component)
             wrapper.should.have.prop('as', tag)
           })
@@ -133,7 +145,10 @@ export default (Component, options = {}) => {
         const MyComponent = () => null
 
         try {
-          shallow(<Component {...requiredProps} as={MyComponent} />)
+          shallow(<Component {...requiredProps} as={MyComponent} />, {
+            autoNesting: true,
+            nestingLevel,
+          })
             .type()
             .should.equal(MyComponent)
         } catch (err) {
@@ -152,7 +167,10 @@ export default (Component, options = {}) => {
         }
 
         try {
-          shallow(<Component {...requiredProps} as={MyComponent} />)
+          shallow(<Component {...requiredProps} as={MyComponent} />, {
+            autoNesting: true,
+            nestingLevel,
+          })
             .type()
             .should.equal(MyComponent)
         } catch (err) {
@@ -165,9 +183,10 @@ export default (Component, options = {}) => {
       it('passes extra props to the component it is renders as', () => {
         const MyComponent = () => null
 
-        shallow(
-          <Component {...requiredProps} as={MyComponent} data-extra-prop='foo' />,
-        ).should.have.descendants('[data-extra-prop="foo"]')
+        shallow(<Component {...requiredProps} as={MyComponent} data-extra-prop='foo' />, {
+          autoNesting: true,
+          nestingLevel,
+        }).should.have.descendants('[data-extra-prop="foo"]')
       })
     })
   }
@@ -222,7 +241,9 @@ export default (Component, options = {}) => {
             'data-simulate-event-here': true,
           }
 
-          const wrapper = shallow(<Component {...props} />)
+          const wrapper = shallow(
+            <Component as={rendersFragmentByDefault ? 'div' : undefined} {...props} />,
+          )
 
           const eventTarget = eventTargets[listenerName]
             ? wrapper.find(eventTargets[listenerName])
@@ -315,21 +336,33 @@ export default (Component, options = {}) => {
           wrapper.detach()
           document.body.removeChild(mountNode)
         } else {
-          shallow(<Component {...requiredProps} className={className} />).should.have.className(
-            className,
-          )
+          shallow(
+            <Component
+              as={rendersFragmentByDefault ? 'div' : undefined}
+              {...requiredProps}
+              className={className}
+            />,
+            {
+              autoNesting: true,
+              nestingLevel,
+            },
+          ).should.have.className(className)
         }
       })
 
       it("user's className does not override the default classes", () => {
-        const defaultClasses = shallow(<Component {...requiredProps} />).prop('className')
+        const defaultClasses = shallow(<Component {...requiredProps} />, {
+          autoNesting: true,
+          nestingLevel,
+        }).prop('className')
 
         if (!defaultClasses) return
 
         const userClasses = faker.hacker.verb()
-        const mixedClasses = shallow(<Component {...requiredProps} className={userClasses} />).prop(
-          'className',
-        )
+        const mixedClasses = shallow(<Component {...requiredProps} className={userClasses} />, {
+          autoNesting: true,
+          nestingLevel,
+        }).prop('className')
 
         defaultClasses.split(' ').forEach((defaultClass) => {
           mixedClasses.should.include(
